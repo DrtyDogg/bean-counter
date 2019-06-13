@@ -1,0 +1,17 @@
+<html>
+    <head>
+        
+            {% if title %}
+            <title>{{ title }} - Budget</title>
+            {% else %}
+            <title>Welcome to your Budget</title>
+            {% endif %}
+    </head>
+    <body>
+        <h1>Budget: </h1>
+        <a href="/index">Home</a>
+        <a href="/new_category">Categories</a>
+        <a href="/new_transaction">Transaction</a>
+        {% block content %}{% endblock %}
+    </body>
+</html>

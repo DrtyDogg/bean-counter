@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Create a new category</h1>
+<form action="" method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.date.label }}<br>
+        {{ form.date(size=32) }}
+    </p>
+    <p>
+        {{ form.location.label }}<br>
+        {{ form.location(size=32) }}
+    </p>
+    <p>
+        {{ form.amount.label }}<br>
+        {{ form.amount(size=32) }}
+    </p>
+    <p>
+        {{ form.description.label }}<br>
+        {{ form.amount(size=32) }}
+    </p>
+    <p>{{ form.submit }}</p>
+</form>
+{% endblock %}
