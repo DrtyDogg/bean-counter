@@ -5,11 +5,13 @@ from wtforms.validators import DataRequired
 
 class TransactionForm(FlaskForm):
     amount = DecimalField('Amount',
-                          validators=[DataRequired], places=2)
+                          validators=[DataRequired(
+                              message='Amount is required')],
+                          places=2)
     location = StringField('Purchase location',
-                           validators=[DataRequired])
+                           validators=[DataRequired()])
     date = DateField('Date of purchase',
-                     validators=[DataRequired],
+                     validators=[DataRequired()],
                      format='%m/%d/%Y')
     description = StringField('Description')
     submit = SubmitField('Save transaction')
@@ -17,8 +19,8 @@ class TransactionForm(FlaskForm):
 
 class CategoryForm(FlaskForm):
     title = StringField('Category name',
-                        validators=[DataRequired])
+                        validators=[DataRequired()])
     budget_amount = DecimalField('Budgeted amount',
-                          validators=[DataRequired],
-                          places=2)
+                                 validators=[DataRequired()],
+                                 places=2)
     submit = SubmitField('Save')

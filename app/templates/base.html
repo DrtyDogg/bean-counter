@@ -8,10 +8,20 @@
             {% endif %}
     </head>
     <body>
-        <h1>Budget: </h1>
-        <a href="/index">Home</a>
-        <a href="/new_category">Categories</a>
-        <a href="/new_transaction">Transaction</a>
+        <p>Budget: 
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('new_category') }}">Categories</a>
+        <a href="{{ url_for('new_transaction') }}">Transaction</a></p>
+        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
         {% block content %}{% endblock %}
     </body>
 </html>

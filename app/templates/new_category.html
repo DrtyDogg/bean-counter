@@ -7,10 +7,16 @@
     <p>
         {{ form.title.label }}<br>
         {{ form.title(size=32) }}
+        {% for error in form.title.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
     </p>
     <p>
         {{ form.budget_amount.label }}<br>
         {{ form.budget_amount(size=32) }}
+        {% for error in form.budget_amount.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
     </p>
     <p>{{ form.submit }}</p>
 </form>
