@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ category.title }}</h1>
+<p>{{ category.description }}</p>
+<hr>
+<a href="{{ url_for('new_line_item', category_id=category.id) }}">New transaction</a>
+<h2>Weekly transactions</h2>
+{% if weekly_items %}
+<table>
+    <thead>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Location</th>
+        <th>Amount</th>
+    </thead>
+{% for item in weekly_items %}
+    <tr>
+        <td>{{ item.date|date }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.location }}</td>
+        <td>{{ item.amount|dollars}}</td>
+    </tr>
+{% endfor %}
+</table>
+{% else %}
+<strong>None</strong>
+{% endif %}
+<h2>Monthly transactions</h2>
+{% if monthly_items %}
+<table>
+    <thead>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Location</th>
+        <th>Amount</th>
+    </thead>
+{% for item in monthly_items %}
+    <tr>
+        <td>{{ item.date|date }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.location }}</td>
+        <td>{{ item.amount|dollars }}</td>
+    </tr>
+{% endfor %}
+</table>
+{% else %}
+<strong>None</strong>
+{% endif %}
+{% endblock %}

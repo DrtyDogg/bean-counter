@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from flask import flash, redirect, render_template, url_for
 from sqlalchemy import extract, func
 from calendar import monthrange
@@ -11,6 +12,7 @@ from app.models import Category, LineItem
 
 today = datetime.now().date()
 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -18,11 +20,13 @@ def index():
     for category in categories:
 
         # Sum the total of the amount category for the current week
-        category.weekly_total = db.session\
+        weekly_total = db.session\
             .query(func.sum(LineItem.amount))\
             .filter(LineItem.week == today.isocalendar()[1])\
             .filter(LineItem.category_id == category.id)\
             .first()[0]
+        if weekly_total:
+            category.weekly_total = Decimal(weekly_total)
         # Sum the total of the month
         category.monthly_total = db.session\
             .query(func.sum(LineItem.amount))\
@@ -35,19 +39,18 @@ def index():
     return render_template('index.html', title='Home', categories=categories)
 
 
-@app.route('category/<category_id', methods=['GET'])
+@app.route('/category/<category_id>', methods=['GET'])
 def category(category_id):
 
-    monthly_items = LineItem.query()\
+    monthly_items = LineItem.query\
         .filter(extract('month', LineItem.date) == today.month)\
         .filter(LineItem.category_id == category_id)\
         .all()
-    weekly_items = LineItem.query()\
-        .filter(extract('month', LineItem.date.
-                isocalendar[1]) == today.month.isocalendar[1])\
+    weekly_items = LineItem.query\
+        .filter(LineItem.week == today.isocalendar()[1])\
         .filter(LineItem.category_id == category_id)\
         .all()
-    category = Category.query().filter(Category.id == category_id).first()
+    category = Category.query.filter(Category.id == category_id).first()
 
     return render_template('category.html',
                            title='{} budget'.format(category.title),
@@ -76,17 +79,17 @@ def new_line_item(category_id):
     category = Category.query.filter(Category.id == category_id).first()
     if form.validate_on_submit():
         # Convert the date to an object
-        date = datetime.strptime(form.date.data, '%m/%d/%Y').date()
         lineitem = LineItem(amount=form.amount.data,
-                            date=date,
-                            week=date.isocalendar()[1],
-                            month=date.month,
+                            date=form.date.data,
+                            week=form.date.data.isocalendar()[1],
                             location=form.location.data,
                             description=form.description.data,
                             category_id=category_id)
         db.session.add(lineitem)
         db.session.commit()
         flash('The transaction has been recorded')
-        return redirect(url_for('index'))
+        return redirect(url_for('new_line_item', category_id=category_id))
     return render_template('new_transaction.html',
-                           title='Create a new transaction', form=form, category=category)
+                           title='Create a new transaction',
+                           form=form,
+                           category=category)

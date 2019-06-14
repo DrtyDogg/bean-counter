@@ -4,18 +4,25 @@
 <h1>Hello world</h1>
 {% if categories %}
 {% for category in categories %}
-<h2><a href="{{ url_for('new_line_item', category_id=category.id) }}">{{ category.title }}</a></h2>
-    <p>Budgeted amount: {{ "$%.2f"|format(category.budget_amount) }}</p>
-    <p>Current week total: 
+<h2><a href="{{ url_for('category', category_id=category.id) }}">{{ category.title }}</a></h2>
+    <p>Budgeted amount: {{ category.budget_amount|dollars }}</p>
+    <p>Remaining amount:
         {% if category.weekly_total %}
-        {{ "$%.2f"|format(category.weekly_total) }}
+        {{ (category.budget_amount - category.weekly_total)|dollars }}
+        {% else %}
+        {{ category.budget_amount|dollars }}
+        {% endif  %}
+    </p>
+   <p>Current week total: 
+        {% if category.weekly_total %}
+        {{ category.weekly_total|dollars }}
         {% else %}
         None so far
         {% endif %}
     </p>
-    <p>Monthly amount: {{ "$%.2f"|format(category.monthly_budget) }}</p>
+    <p>Monthly amount: {{ category.monthly_budget|dollars }}</p>
     {% if category.monthly_total %}
-    <p>Current Month: {{ "$%.2f"|format(category.monthly_total) }}</p>
+    <p>Current Month: {{ category.monthly_total|dollars }}</p>
     {% else %}
     None so far
     {% endif %}
