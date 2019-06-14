@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Create a new category</h1>
+<h1>Add a new {{ category.title|lower }} transaction</h1>
 <form action="" method="POST" novalidate>
     {{ form.hidden_tag() }}
     <p>

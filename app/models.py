@@ -8,6 +8,9 @@ class Category(db.Model):
     line_items = db.relationship('LineItem',
                                  backref='category',
                                  lazy='dynamic')
+    weekly_total = None
+    monthly_total = None
+    monthly_budget = None
 
     def __repr__(self):
         return '<Category: {}>'.format(self.title)
