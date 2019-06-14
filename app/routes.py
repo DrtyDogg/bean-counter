@@ -11,12 +11,12 @@ from app.models import Category, LineItem
 
 
 today = datetime.now().date()
+categories = Category.query.all()
 
 
 @app.route('/')
 @app.route('/index')
 def index():
-    categories = Category.query.all()
     for category in categories:
 
         # Sum the total of the amount category for the current week
@@ -53,6 +53,7 @@ def category(category_id):
     category = Category.query.filter(Category.id == category_id).first()
 
     return render_template('category.html',
+                           categories=categories,
                            title='{} budget'.format(category.title),
                            category=category,
                            monthly_items=monthly_items,
@@ -63,14 +64,17 @@ def category(category_id):
 def new_category():
     form = CategoryForm()
     if form.validate_on_submit():
+        global categories
         category = Category(title=form.title.data,
                             budget_amount=form.budget_amount.data)
         db.session.add(category)
         db.session.commit()
         flash('The {} category has been created'.format(form.title.data))
+        categories = Category.query.all()
         return redirect(url_for('index'))
     return render_template('new_category.html',
-                           title='Create a new category', form=form)
+                           title='Create a new category',
+                           form=form, categories=categories)
 
 # qry = LineItem.query(func.sum(LineItem.amount).label('amount'))
 @app.route('/new_line_item/<category_id>', methods=['GET', 'POST'])
@@ -92,4 +96,5 @@ def new_line_item(category_id):
     return render_template('new_transaction.html',
                            title='Create a new transaction',
                            form=form,
+                           categories=categories,
                            category=category)

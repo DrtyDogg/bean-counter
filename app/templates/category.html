@@ -1,50 +1,77 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block app_content %}
 <h1>{{ category.title }}</h1>
-<p>{{ category.description }}</p>
-<hr>
 <a href="{{ url_for('new_line_item', category_id=category.id) }}">New transaction</a>
-<h2>Weekly transactions</h2>
-{% if weekly_items %}
-<table>
-    <thead>
-        <th>Date</th>
-        <th>Description</th>
-        <th>Location</th>
-        <th>Amount</th>
-    </thead>
-{% for item in weekly_items %}
-    <tr>
-        <td>{{ item.date|date }}</td>
-        <td>{{ item.description }}</td>
-        <td>{{ item.location }}</td>
-        <td>{{ item.amount|dollars}}</td>
-    </tr>
-{% endfor %}
-</table>
-{% else %}
-<strong>None</strong>
-{% endif %}
-<h2>Monthly transactions</h2>
-{% if monthly_items %}
-<table>
-    <thead>
-        <th>Date</th>
-        <th>Description</th>
-        <th>Location</th>
-        <th>Amount</th>
-    </thead>
-{% for item in monthly_items %}
-    <tr>
-        <td>{{ item.date|date }}</td>
-        <td>{{ item.description }}</td>
-        <td>{{ item.location }}</td>
-        <td>{{ item.amount|dollars }}</td>
-    </tr>
-{% endfor %}
-</table>
-{% else %}
-<strong>None</strong>
-{% endif %}
+
+<!--  Weekly Transactions panel -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>Weekly transactions</h2>
+    </div>
+    <div class="panel-body">
+        {% if weekly_items %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in weekly_items %}
+                    <tr>
+                        <td>{{ item.date|date }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.location }}</td>
+                        <td>{{ item.amount|dollars}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <strong>None</strong>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Monthly transactions panel-->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>Monthly transactions</h2>
+    </div>
+    <div class="panel-body">
+        {% if monthly_items %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in monthly_items %}
+                    <tr>
+                        <td>{{ item.date|date }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.location }}</td>
+                        <td>{{ item.amount|dollars }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+        <strong>None</strong>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

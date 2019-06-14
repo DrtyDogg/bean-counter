@@ -1,26 +1,52 @@
-<html>
-    <head>
-        
-            {% if title %}
-            <title>{{ title }} - Budget</title>
-            {% else %}
-            <title>Welcome to your Budget</title>
-            {% endif %}
-    </head>
-    <body>
-        <p>Budget: 
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('new_category') }}">Categories</a>
-        <hr>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </body>
-</html>
+{% extends 'bootstrap/base.html' %}
+{% block title %}
+{% if title %}
+{{ title }} - Budget
+{% else %}
+Welcome to your Budget
+{% endif %}
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('index') }}">Ellis budget</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                {% if categories %}
+                {% for category in categories %}
+                <li>
+                    <a href="{{ url_for('category', category_id=category.id) }}">{{ category.title }}</a>
+                </li>
+                {% endfor %}
+                {% endif %}
+            </ul>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    {% block app_content %}{% endblock %}
+</div>
+<footer class="page-footer font-small">
+    <div class="footer-copyright text-center py-3">&copy;2019 Donnie Ellis</div>
+</footer>
+{% endblock %}

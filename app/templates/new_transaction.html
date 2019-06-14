@@ -1,37 +1,17 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block content %}
-<h1>Add a new {{ category.title|lower }} transaction</h1>
-<form action="" method="POST" novalidate>
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.date.label }}<br>
-        {{ form.date(size=32) }}
-        {% for error in form.date.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.location.label }}<br>
-        {{ form.location(size=32) }}
-        {% for error in form.location.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.amount.label }}<br>
-        {{ form.amount(size=32) }}
-        {% for error in form.amount.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.description.label }}<br>
-        {{ form.description(size=32) }}
-        {% for error in form.description.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>{{ form.submit }}</p>
-</form>
+{% block app_content %}
+    <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1>Add a new {{ category.title|lower }} transaction</h1>
+                    </div>
+                    <div class="panel-body">
+                        {{ wtf.quick_form(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
 {% endblock %}
