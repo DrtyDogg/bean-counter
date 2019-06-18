@@ -11,12 +11,13 @@ from app.models import Category, LineItem
 
 
 today = datetime.now().date()
-categories = Category.query.all()
 
 
 @app.route('/')
 @app.route('/index')
 def index():
+
+    categories = Category.query.all()
     for category in categories:
 
         # Sum the total of the amount category for the current week
@@ -42,6 +43,7 @@ def index():
 @app.route('/category/<category_id>', methods=['GET'])
 def category(category_id):
 
+    categories = Category.query.all()
     monthly_items = LineItem.query\
         .filter(extract('month', LineItem.date) == today.month)\
         .filter(LineItem.category_id == category_id)\
@@ -62,6 +64,7 @@ def category(category_id):
 
 @app.route('/new_category', methods=['GET', 'POST'])
 def new_category():
+    categories = Category.query.all()
     form = CategoryForm()
     if form.validate_on_submit():
         global categories
@@ -79,6 +82,7 @@ def new_category():
 # qry = LineItem.query(func.sum(LineItem.amount).label('amount'))
 @app.route('/new_line_item/<category_id>', methods=['GET', 'POST'])
 def new_line_item(category_id):
+    categories = Category.query.all()
     form = TransactionForm()
     category = Category.query.filter(Category.id == category_id).first()
     if form.validate_on_submit():
