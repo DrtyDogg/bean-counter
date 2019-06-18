@@ -67,7 +67,6 @@ def new_category():
     categories = Category.query.all()
     form = CategoryForm()
     if form.validate_on_submit():
-        global categories
         category = Category(title=form.title.data,
                             budget_amount=form.budget_amount.data)
         db.session.add(category)
