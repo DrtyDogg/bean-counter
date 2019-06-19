@@ -13,8 +13,8 @@ from app.models import Category, LineItem
 today = datetime.now().date()
 
 
-@app.route('/')
-@app.route('/index')
+@app.route(app.config['APPLICATION_ROUTE'] + '/')
+@app.route(app.config['APPLICATION_ROUTE'] + '/index')
 def index():
 
     categories = Category.query.all()
@@ -40,7 +40,7 @@ def index():
     return render_template('index.html', title='Home', categories=categories)
 
 
-@app.route('/category/<category_id>', methods=['GET'])
+@app.route(app.config['APPLICATION_ROUTE'] + '/category/<category_id>', methods=['GET'])
 def category(category_id):
 
     categories = Category.query.all()
@@ -62,7 +62,7 @@ def category(category_id):
                            weekly_items=weekly_items)
 
 
-@app.route('/new_category', methods=['GET', 'POST'])
+@app.route(app.config['APPLICATION_ROUTE'] + '/new_category', methods=['GET', 'POST'])
 def new_category():
     categories = Category.query.all()
     form = CategoryForm()
@@ -79,7 +79,7 @@ def new_category():
                            form=form, categories=categories)
 
 # qry = LineItem.query(func.sum(LineItem.amount).label('amount'))
-@app.route('/new_line_item/<category_id>', methods=['GET', 'POST'])
+@app.route(app.config['APPLICATION_ROUTE'] + '/new_line_item/<category_id>', methods=['GET', 'POST'])
 def new_line_item(category_id):
     categories = Category.query.all()
     form = TransactionForm()
