@@ -84,9 +84,17 @@ def new_category():
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_line_item/<category_id>',
            methods=['GET', 'POST'])
 def new_line_item(category_id):
-    categories = Category.query.all()
     form = TransactionForm()
-    category = Category.query.filter(Category.id == category_id).first()
+    # Fill the categories drop down
+    categories = Category.query.all()
+    cats = []
+    for cat in categories:
+        newCat = (cat.id, cat.title)
+        cats.append(newCat)
+        # Get the current category because ??? is this still needed?
+        if cat.id is int(category_id):
+            category = cat
+    form.category.choices = cats
     if form.validate_on_submit():
         # Convert the date to an object
         lineitem = LineItem(amount=form.amount.data,
@@ -98,7 +106,9 @@ def new_line_item(category_id):
         db.session.add(lineitem)
         db.session.commit()
         flash('The transaction has been recorded')
-        return redirect(url_for('new_line_item', category_id=category_id))
+        return redirect(url_for('category', category_id=category_id))
+    else:
+        form.category.data = int(category_id)
     return render_template('new_transaction.html',
                            title='Create a new transaction',
                            form=form,

@@ -1,9 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import DateField, DecimalField, StringField, SubmitField
+from wtforms import DateField, DecimalField, SelectField, StringField,\
+                    SubmitField
 from wtforms.validators import DataRequired
+from app.models import Category
 
 
 class TransactionForm(FlaskForm):
+    category = SelectField(u'Category', validators=[DataRequired()],
+                           coerce=int)
     amount = DecimalField('Amount',
                           validators=[DataRequired(
                               message='Amount is required')],
