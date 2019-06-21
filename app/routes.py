@@ -39,7 +39,7 @@ def index():
         category.monthly_budget = category.budget_amount/7*days_in_month
     return render_template('index.html', title='Home', categories=categories)
 
-
+# /category/<ID>
 @app.route(app.config['APPLICATION_ROUTE'] + '/category/<category_id>',
            methods=['GET'])
 def category(category_id):
@@ -62,7 +62,7 @@ def category(category_id):
                            monthly_items=monthly_items,
                            weekly_items=weekly_items)
 
-
+# /New_Category
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_category',
            methods=['GET', 'POST'])
 def new_category():
@@ -80,7 +80,7 @@ def new_category():
                            title='Create a new category',
                            form=form, categories=categories)
 
-
+# /Edit_Category/<ID>
 @app.route(app.config['APPLICATION_ROUTE'] + '/edit_category/<category_id>',
            methods=['GET', 'POST'])
 def edit_category(category_id):
@@ -112,8 +112,8 @@ def edit_category(category_id):
                                form=form, categories=categories)
 
 
-# qry = LineItem.query(func.sum(LineItem.amount).label('amount'))
-@app.route(app.config['APPLICATION_ROUTE'] + '/new_line_item/<category_id>',
+# /New_Transaction/<ID>
+@app.route(app.config['APPLICATION_ROUTE'] + '/new_transaction/<category_id>',
            methods=['GET', 'POST'])
 def new_line_item(category_id):
     form = TransactionForm()

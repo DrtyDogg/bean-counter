@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import DateField, DecimalField, SelectField, StringField,\
+from wtforms import DecimalField, SelectField, StringField,\
                     SubmitField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired
 from app.models import Category
 
