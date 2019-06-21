@@ -73,7 +73,8 @@ def new_category():
                             budget_amount=form.budget_amount.data)
         db.session.add(category)
         db.session.commit()
-        flash('The {} category has been created'.format(category.title))
+        flash('The {} category has been created'.format(category.title),
+               'info')
         categories = Category.query.all()
         return redirect(url_for('index'))
     return render_template('new_category.html',
@@ -90,9 +91,9 @@ def edit_category(category_id):
         if cat.id is int(category_id):
             category = cat
             break
-        else:
-            flash('That category was not found')
-            return redirect(url_for('index'))
+    if cat is None:
+        flash('That category was not found', 'warning')
+        return redirect(url_for('index'))
     # Load the form
     form = CategoryForm()
 
@@ -101,16 +102,31 @@ def edit_category(category_id):
         category.title = form.title.data
         category.budget_amount = form.budget_amount.data
         db.session.commit()
-        flash('The {} category has been updated'.format(category.title))
+        flash('The {} category has been updated'.format(category.title),
+               'info')
         return redirect(url_for('category', category_id=category.id))
     else:
         # This isn't a postback so set the form values
         form.title.data = category.title
         form.budget_amount.data = category.budget_amount
         return render_template('new_category.html',
-                               title='Edit the {} category'.format(category.title),
+                               title='Edit the {} category'.format(
+                                   category.title),
                                form=form, categories=categories)
 
+
+# /Delete_Category/<ID>
+@app.route(app.config['APPLICATION_ROUTE'] + '/delete_category/<category_id>',
+           methods=['GET'])
+def delete_category(category_id):
+    category = Category.query.filter(
+        Category.id == int(category_id)).first_or_404()
+    category_title = category.title
+    db.session.delete(category)
+    db.session.commit()
+    flash('The {} category has been deleted'.format(
+        category_title), 'warning')
+    return redirect(url_for('index'))
 
 # /New_Transaction/<ID>
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_transaction/<category_id>',
@@ -137,7 +153,7 @@ def new_line_item(category_id):
                             category_id=category_id)
         db.session.add(lineitem)
         db.session.commit()
-        flash('The transaction has been recorded')
+        flash('The transaction has been recorded', 'info')
         return redirect(url_for('category', category_id=category_id))
     else:
         form.category.data = int(category_id)
@@ -146,3 +162,46 @@ def new_line_item(category_id):
                            form=form,
                            categories=categories,
                            category=category)
+
+
+# /Edit_Transaction
+@app.route(
+    app.config['APPLICATION_ROUTE'] + '/edit_transaction/<transaction_id>',
+    methods=['GET', 'POST'])
+def edit_transaction(transaction_id):
+    form = TransactionForm()
+    # Get the transaction to edit
+    transaction = LineItem.query.filter(
+        LineItem.id == int(transaction_id)).first_or_404()
+    # Get the categories
+    categories = Category.query.all()
+    # Build the category dropdown
+    cats = []
+    for cat in categories:
+        newCat = (cat.id, cat.title)
+        cats.append(newCat)
+    form.category.choices = cats
+
+    # Is this a postback?
+    if form.validate_on_submit():
+        # Save the edits
+        transaction.description = form.description.data
+        transaction.date = form.date.data
+        transaction.week = form.date.data.isocalendar()[1]
+        transaction.location = form.location.data
+        transaction.amount = form.amount.data
+        db.session.commit()
+        flash('The transaction has been updated', 'info')
+        return redirect(url_for('category',
+                                category_id=transaction.category_id))
+    else:
+        # Not a post so set the default values
+        form.category.data = transaction.category_id
+        form.description.data = transaction.description
+        form.date.data = transaction.date
+        form.location.data = transaction.location
+        form.amount.data = transaction.amount
+    return render_template('new_transaction.html',
+                           title='Edit a transaction',
+                           form=form,
+                           categories=categories)
