@@ -3,7 +3,6 @@ from wtforms import DecimalField, SelectField, StringField,\
                     SubmitField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired
-from app.models import Category
 
 
 class TransactionForm(FlaskForm):
@@ -16,8 +15,7 @@ class TransactionForm(FlaskForm):
     location = StringField('Purchase location',
                            validators=[DataRequired()])
     date = DateField('Date of purchase',
-                     validators=[DataRequired()],
-                     format='%m/%d/%Y')
+                     validators=[DataRequired()])
     description = StringField('Description')
     submit = SubmitField('Save transaction')
 
