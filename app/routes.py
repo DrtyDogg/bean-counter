@@ -73,12 +73,44 @@ def new_category():
                             budget_amount=form.budget_amount.data)
         db.session.add(category)
         db.session.commit()
-        flash('The {} category has been created'.format(form.title.data))
+        flash('The {} category has been created'.format(category.title))
         categories = Category.query.all()
         return redirect(url_for('index'))
     return render_template('new_category.html',
                            title='Create a new category',
                            form=form, categories=categories)
+
+
+@app.route(app.config['APPLICATION_ROUTE'] + '/edit_category/<category_id>',
+           methods=['GET', 'POST'])
+def edit_category(category_id):
+    categories = Category.query.all()
+    # Make sure the category exists
+    for cat in categories:
+        if cat.id is int(category_id):
+            category = cat
+            break
+        else:
+            flash('That category was not found')
+            return redirect(url_for('index'))
+    # Load the form
+    form = CategoryForm()
+
+    # Get the submission
+    if form.validate_on_submit():
+        category.title = form.title.data
+        category.budget_amount = form.budget_amount.data
+        db.session.commit()
+        flash('The {} category has been updated'.format(category.title))
+        return redirect(url_for('category', category_id=category.id))
+    else:
+        # This isn't a postback so set the form values
+        form.title.data = category.title
+        form.budget_amount.data = category.budget_amount
+        return render_template('new_category.html',
+                               title='Edit the {} category'.format(category.title),
+                               form=form, categories=categories)
+
 
 # qry = LineItem.query(func.sum(LineItem.amount).label('amount'))
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_line_item/<category_id>',

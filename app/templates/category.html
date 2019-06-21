@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h1>{{ category.title }}</h1>
-<a href="{{ url_for('new_line_item', category_id=category.id) }}">New transaction</a>
+<a href="{{ url_for('edit_category', category_id=category.id) }}"><h1>{{ category.title }}</h1></a>
+
 
 <!--  Weekly Transactions panel -->
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2>Weekly transactions</h2>
+        <div class="float-right"><a href="{{ url_for('new_line_item', category_id=category.id) }}">New transaction</a></div>
     </div>
     <div class="panel-body">
         {% if weekly_items %}
