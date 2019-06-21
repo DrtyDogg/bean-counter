@@ -55,13 +55,6 @@ def category(category_id):
         .all()
     # Build up the category information
     category = Category.query.filter(Category.id == category_id).first()
-    monthly_total = db.session\
-            .query(func.sum(LineItem.amount))\
-            .filter(extract('month', LineItem.date) == today.month)\
-            .filter(LineItem.category_id == category.id)\
-            .first()[0]
-    if monthly_total:
-        category.monthly_total = Decimal(monthly_total)
     days_in_month = monthrange(today.year, today.month)[1]
     category.monthly_budget = category.budget_amount/7*days_in_month
 
