@@ -28,12 +28,18 @@ def index():
             .first()[0]
         if weekly_total:
             category.weekly_total = Decimal(weekly_total)
+        else:
+            category.weekly_total = 0
         # Sum the total of the month
-        category.monthly_total = db.session\
+        monthly_total = db.session\
             .query(func.sum(LineItem.amount))\
             .filter(extract('month', LineItem.date) == today.month)\
             .filter(LineItem.category_id == category.id)\
             .first()[0]
+        if monthly_total:
+            category.monthly_total = monthly_total
+        else:
+            category.monthly_total = 0
         # Get the monthly budget
         days_in_month = monthrange(today.year, today.month)[1]
         category.monthly_budget = category.budget_amount/7*days_in_month
@@ -208,3 +214,6 @@ def edit_transaction(transaction_id):
                            title='Edit a transaction',
                            form=form,
                            categories=categories)
+
+def set_date(date):
+    
