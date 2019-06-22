@@ -45,10 +45,10 @@ def index():
         category.monthly_budget = category.budget_amount/7*days_in_month
     return render_template('index.html', title='Home', categories=categories)
 
+
 # /category/<ID>
 @app.route(app.config['APPLICATION_ROUTE'] + '/category/<category_id>',
            methods=['GET'])
-
 def category(category_id):
 
     categories = Category.query.all()
@@ -72,10 +72,10 @@ def category(category_id):
                            monthly_items=monthly_items,
                            weekly_items=weekly_items)
 
+
 # /New_Category
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_category',
            methods=['GET', 'POST'])
-
 def new_category():
     categories = Category.query.all()
     form = CategoryForm()
@@ -85,7 +85,7 @@ def new_category():
         db.session.add(category)
         db.session.commit()
         flash('The {} category has been created'.format(category.title),
-               'info')
+              'info')
         categories = Category.query.all()
         return redirect(url_for('index'))
     return render_template('new_category.html',
@@ -114,7 +114,7 @@ def edit_category(category_id):
         category.budget_amount = form.budget_amount.data
         db.session.commit()
         flash('The {} category has been updated'.format(category.title),
-               'info')
+              'info')
         return redirect(url_for('category', category_id=category.id))
     else:
         # This isn't a postback so set the form values
@@ -216,6 +216,3 @@ def edit_transaction(transaction_id):
                            title='Edit a transaction',
                            form=form,
                            categories=categories)
-
-def set_date(date):
-    
