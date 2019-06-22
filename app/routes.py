@@ -42,6 +42,7 @@ def index():
 
 @app.route(app.config['APPLICATION_ROUTE'] + '/category/<category_id>',
            methods=['GET'])
+
 def category(category_id):
 
     categories = Category.query.all()
@@ -65,6 +66,7 @@ def category(category_id):
 
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_category',
            methods=['GET', 'POST'])
+
 def new_category():
     categories = Category.query.all()
     form = CategoryForm()
@@ -81,8 +83,9 @@ def new_category():
                            form=form, categories=categories)
 
 # qry = LineItem.query(func.sum(LineItem.amount).label('amount'))
-@app.route(app.config['APPLICATION_ROUTE'] + '/new_line_item/<category_id>',
+@app.route(app.config['APPLICATION_ROUTE'] + '/new_line_item/<category_id>',\
            methods=['GET', 'POST'])
+
 def new_line_item(category_id):
     categories = Category.query.all()
     form = TransactionForm()
