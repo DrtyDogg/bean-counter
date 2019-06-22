@@ -49,6 +49,7 @@ def index():
 # /category/<ID>
 @app.route(app.config['APPLICATION_ROUTE'] + '/category/<category_id>',
            methods=['GET'])
+
 def category(category_id):
 
     categories = Category.query.all()
@@ -76,6 +77,7 @@ def category(category_id):
 # /New_Category
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_category',
            methods=['GET', 'POST'])
+
 def new_category():
     categories = Category.query.all()
     form = CategoryForm()
