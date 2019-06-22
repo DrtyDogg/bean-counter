@@ -1,9 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import DateField, DecimalField, StringField, SubmitField
+from wtforms import DecimalField, SelectField, StringField,\
+                    SubmitField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired
 
 
 class TransactionForm(FlaskForm):
+    category = SelectField(u'Category', validators=[DataRequired()],
+                           coerce=int)
     amount = DecimalField('Amount',
                           validators=[DataRequired(
                               message='Amount is required')],
@@ -11,8 +15,7 @@ class TransactionForm(FlaskForm):
     location = StringField('Purchase location',
                            validators=[DataRequired()])
     date = DateField('Date of purchase',
-                     validators=[DataRequired()],
-                     format='%m/%d/%Y')
+                     validators=[DataRequired()])
     description = StringField('Description')
     submit = SubmitField('Save transaction')
 

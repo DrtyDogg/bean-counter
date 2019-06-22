@@ -28,10 +28,14 @@ Welcome to your Budget
                 </li>
                 {% endfor %}
                 {% endif %}
+                <li>
+                    <a href="{{ url_for('new_category') }}">New Category</a>
+                </li>
             </ul>
 
         </div>
     </div>
+</nav>
 {% endblock %}
 
 {% block content %}
