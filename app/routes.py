@@ -171,6 +171,8 @@ def delete_category(category_id):
         category_title), 'warning')
     return redirect(url_for('index'))
 
+
+######## Transactions
 # /New_Transaction/<ID>
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_transaction/<category_id>',
            methods=['GET', 'POST'])
@@ -200,6 +202,7 @@ def new_line_item(category_id):
         return redirect(url_for('category', category_id=category_id))
     else:
         form.category.data = int(category_id)
+        form.date.data = today
     return render_template('new_transaction.html',
                            title='Create a new transaction',
                            form=form,
