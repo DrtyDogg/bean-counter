@@ -18,11 +18,6 @@ def before_request():
     session['current_week'] = today.isocalendar()[1]
     if 'current_view' not in session:
         session['current_view'] = today.isocalendar()[1]
-        # Convert the iso week into the date for Sunday
-        # start_day = datetime.strptime('2019w{} SUN', '%YW%U %a')
-        # Convert today into Sunday
-        # idx = (today.weekday() + 1) % 7
-        # sunday = today - timedelta(idx)
 
 
 @app.route(app.config['APPLICATION_ROUTE'] + '/set_week/<value>',
@@ -84,7 +79,8 @@ def index():
            methods=['GET'])
 def category(category_id):
     # Get the currently set week
-    current_view = datetime.strptime('2019w{} SUN'.format(session['current_view']), '%YW%U %a')
+    current_view = datetime.strptime(
+        '2019w{} SUN'.format(session['current_view']), '%YW%U %a')
     categories = Category.query.all()
     monthly_items = LineItem.query\
         .filter(extract('month', LineItem.date) == current_view.month)\
