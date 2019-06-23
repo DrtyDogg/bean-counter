@@ -42,6 +42,9 @@ def set_week(value):
 @app.route(app.config['APPLICATION_ROUTE'] + '/index')
 def index():
     categories = Category.query.all()
+    # Get a date object from the currently viewed date
+    current_view = datetime.strptime(
+        '2019w{} SUN'.format(session['current_view']), '%YW%U %a')
 
     for category in categories:
 
@@ -59,7 +62,7 @@ def index():
         # Sum the total of the month
         monthly_total = db.session\
             .query(func.sum(LineItem.amount))\
-            .filter(extract('month', LineItem.date) == today.month)\
+            .filter(extract('month', LineItem.date) == current_view.month)\
             .filter(LineItem.category_id == category.id)\
             .first()[0]
         if monthly_total:
@@ -67,7 +70,7 @@ def index():
         else:
             category.monthly_total = 0
         # Get the monthly budget
-        days_in_month = monthrange(today.year, today.month)[1]
+        days_in_month = monthrange(current_view.year, current_view.month)[1]
         category.monthly_budget = category.budget_amount/7*days_in_month
     return render_template('index.html',
                            title='Home',
