@@ -25,7 +25,7 @@ Getting started
 ------------
 
 ```` bash
-git clone 
+git clone https://github.com/DrtyDogg/bean-counter.git
 cd bean-counter
 python -m venv venv
 source venv/bin/activate
