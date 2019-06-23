@@ -163,8 +163,7 @@ def edit_category(category_id):
 @app.route(app.config['APPLICATION_ROUTE'] + '/delete_category/<category_id>',
            methods=['GET'])
 def delete_category(category_id):
-    category = Category.query.filter(
-        Category.id == int(category_id)).first_or_404()
+    category = Category.query.get_or_404(category_id)
     category_title = category.title
     db.session.delete(category)
     db.session.commit()
@@ -215,8 +214,7 @@ def new_line_item(category_id):
 def edit_transaction(transaction_id):
     form = TransactionForm()
     # Get the transaction to edit
-    transaction = LineItem.query.filter(
-        LineItem.id == int(transaction_id)).first_or_404()
+    transaction = LineItem.query.get_or_404(transaction_id)
     # Get the categories
     categories = Category.query.all()
     # Build the category dropdown
