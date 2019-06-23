@@ -78,7 +78,7 @@ def index():
 
 
 # /category/<ID>
-@app.route(app.config['APPLICATION_ROUTE'] + '/category/<category_id>',
+@app.route(app.config['APPLICATION_ROUTE'] + '/category/<int:category_id>',
            methods=['GET'])
 def category(category_id):
     # Get the currently set week
@@ -97,7 +97,6 @@ def category(category_id):
     category = Category.query.filter(Category.id == category_id).first()
     days_in_month = monthrange(current_view.year, current_view.month)[1]
     category.monthly_budget = category.budget_amount/7*days_in_month
-
     return render_template('category.html',
                            categories=categories,
                            title='{} budget'.format(category.title),
