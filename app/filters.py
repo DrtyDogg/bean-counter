@@ -1,3 +1,4 @@
+from datetime import datetime
 # Local imports
 from app import app
 
@@ -12,3 +13,10 @@ def format_date(date):
 def format_dollars(amount):
     """ format a float as $0.00 """
     return '${:,.2f}'.format(amount)
+
+
+@app.template_filter('week_of')
+def format_week_of(week):
+    # Get the datetime object from
+    start_day = datetime.strptime('2019w{} SUN'.format(week), '%YW%U %a')
+    return start_day.strftime('Week of %a %B %d %Y')

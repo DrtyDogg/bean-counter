@@ -1,6 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from sqlalchemy import extract, func
 from calendar import monthrange
 
@@ -13,19 +13,48 @@ from app.models import Category, LineItem
 today = datetime.now().date()
 
 
+@app.before_request
+def before_request():
+    session['current_week'] = today.isocalendar()[1]
+    if 'current_view' not in session:
+        session['current_view'] = today.isocalendar()[1]
+
+
+@app.route(app.config['APPLICATION_ROUTE'] + '/set_week/<value>',
+           methods=['GET'])
+def set_week(value):
+    prev = request.args.get('return')
+    if prev is None:
+        prev = '/index'
+    current = int(session['current_view'])
+    if value == 'next':
+        session['current_view'] = current + 1
+    elif value == 'previous':
+        session['current_view'] = current - 1
+    elif value == 'today':
+        session['current_view'] = session['current_week']
+    else:
+        flash('Invalid date set', 'warning')
+    return redirect(prev)
+
+
 @app.route(app.config['APPLICATION_ROUTE'] + '/')
 @app.route(app.config['APPLICATION_ROUTE'] + '/index')
 def index():
-
     categories = Category.query.all()
+    # Get a date object from the currently viewed date
+    current_view = datetime.strptime(
+        '2019w{} SUN'.format(session['current_view']), '%YW%U %a')
+
     for category in categories:
 
         # Sum the total of the amount category for the current week
         weekly_total = db.session\
             .query(func.sum(LineItem.amount))\
-            .filter(LineItem.week == today.isocalendar()[1])\
+            .filter(LineItem.week == session['current_view'])\
             .filter(LineItem.category_id == category.id)\
             .first()[0]
+
         if weekly_total:
             category.weekly_total = Decimal(weekly_total)
         else:
@@ -33,7 +62,7 @@ def index():
         # Sum the total of the month
         monthly_total = db.session\
             .query(func.sum(LineItem.amount))\
-            .filter(extract('month', LineItem.date) == today.month)\
+            .filter(extract('month', LineItem.date) == current_view.month)\
             .filter(LineItem.category_id == category.id)\
             .first()[0]
         if monthly_total:
@@ -41,9 +70,11 @@ def index():
         else:
             category.monthly_total = 0
         # Get the monthly budget
-        days_in_month = monthrange(today.year, today.month)[1]
+        days_in_month = monthrange(current_view.year, current_view.month)[1]
         category.monthly_budget = category.budget_amount/7*days_in_month
-    return render_template('index.html', title='Home', categories=categories)
+    return render_template('index.html',
+                           title='Home',
+                           categories=categories)
 
 
 # /category/<ID>
@@ -51,19 +82,21 @@ def index():
            methods=['GET'])
 
 def category(category_id):
-
+    # Get the currently set week
+    current_view = datetime.strptime(
+        '2019w{} SUN'.format(session['current_view']), '%YW%U %a')
     categories = Category.query.all()
     monthly_items = LineItem.query\
-        .filter(extract('month', LineItem.date) == today.month)\
+        .filter(extract('month', LineItem.date) == current_view.month)\
         .filter(LineItem.category_id == category_id)\
         .all()
     weekly_items = LineItem.query\
-        .filter(LineItem.week == today.isocalendar()[1])\
+        .filter(LineItem.week == session['current_view'])\
         .filter(LineItem.category_id == category_id)\
         .all()
     # Build up the category information
     category = Category.query.filter(Category.id == category_id).first()
-    days_in_month = monthrange(today.year, today.month)[1]
+    days_in_month = monthrange(current_view.year, current_view.month)[1]
     category.monthly_budget = category.budget_amount/7*days_in_month
 
     return render_template('category.html',
