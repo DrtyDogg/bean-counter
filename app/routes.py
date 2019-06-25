@@ -10,11 +10,9 @@ from app.forms import CategoryForm, TransactionForm
 from app.models import Category, LineItem
 
 
-today = datetime.now().date()
-
-
 @app.before_request
 def before_request():
+    today = datetime.now().date()
     session['current_week'] = today.isocalendar()[1]
     if 'current_view' not in session:
         session['current_view'] = today.isocalendar()[1]
@@ -171,11 +169,12 @@ def delete_category(category_id):
     return redirect(url_for('index'))
 
 
-######## Transactions
+# Transactions
 # /New_Transaction/<ID>
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_transaction/<category_id>',
            methods=['GET', 'POST'])
 def new_line_item(category_id):
+    today = datetime.now().date()
     form = TransactionForm()
     # Fill the categories drop down
     categories = Category.query.all()
