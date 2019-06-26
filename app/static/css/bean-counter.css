@@ -22,25 +22,10 @@
     color: white;
 }
 
-.well h3 {
-    padding-top: 0px;
-}
-.well-lg.bg-success{
+.dashboard{
     color: white;
     padding-top: 0px;
 }
-.well-lg.bg-warning {
-    color: white;
-    padding-top: 0px;
-}
-.well-lg.bg-info {
-    color: white;
-    padding-top: 0px;
-}
-.well-lg.bg-primary {
-    color: white;
-    padding-top: 0px;
-}
-.well-lg h2{
+.dashboard h2 {
     text-align: center;
 }

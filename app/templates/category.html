@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block scripts %}
 <script type="text/javascript">
@@ -138,18 +139,18 @@
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div
                     class="col-xs-12 well well-lg
-                         {{ 'bg-success' if (category.monthly_budget - ((monthly_items | sum(attribute='amount') or 0) or 0)) >= 0 }}
-                         {{ 'bg-danger' if (category.monthly_budget - ((monthly_items | sum(attribute='amount') or 0) or 0)) < 0 }}">
+                         {{ 'bg-success' if (category.monthly_budget - ((monthly_items.items | sum(attribute='amount') or 0) or 0)) >= 0 }}
+                         {{ 'bg-danger' if (category.monthly_budget - ((monthly_items.items | sum(attribute='amount') or 0) or 0)) < 0 }}">
                     <h3 class="text-white">Remaining</h3>
                     <h2 class="text-center text-white">
-                        {{ (category.monthly_budget - ((monthly_items | sum(attribute='amount') or 0) or 0)) | dollars}}
+                        {{ (category.monthly_budget - ((monthly_items.items | sum(attribute='amount') or 0) or 0)) | dollars}}
                     </h2>
                 </div>
             </div>
             <div class="col-md-4 col-sm-6 hidden-xs">
                 <div class="col-xs-12 well well-lg bg-info">
-                    <h3 class="text-white">Total {{ monthly_items | length }}</h3>
-                    <h2 class="text-center text-white">{{ (monthly_items | sum(attribute='amount') or 0) |dollars }}</h2>
+                    <h3 class="text-white">Total {{ monthly_items.items | length }}</h3>
+                    <h2 class="text-center text-white">{{ (monthly_itemsitems | sum(attribute='amount') or 0) |dollars }}</h2>
                 </div>
             </div>
             <div class="col-md-4 hidden-sm hidden-xs">
@@ -159,7 +160,7 @@
                 </div>
             </div>
         </div>
-        {% if monthly_items %}
+        {% if monthly_items.items %}
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -171,7 +172,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in monthly_items %}
+                    {% for item in monthly_items.items %}
                     <tr>
                         <td>{{ item.date|date }}</td>
                         <td>{{ item.description }}</td>
@@ -182,7 +183,7 @@
                 </tbody>
             </table>
         </div>
-
+        {{ render_pagination(monthly_items)}}
         {% else %}
         <strong>None</strong>
         {% endif %}

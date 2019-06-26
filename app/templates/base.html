@@ -7,6 +7,15 @@ Welcome to your Budget
 {% endif %}
 {% endblock %}
 
+{% block scripts %}
+{{ super() }}
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+{% endblock %}
+
 {% block navbar %}
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -44,6 +53,7 @@ Welcome to your Budget
                     <a type="button" class="btn btn-default navbar-btn disabled" href="">
                         {{ session['current_view'] | week_of }}
                     </a>
+                    {% if not session.current_view >= session.current_week %}
                     <a type="button" class="btn btn-default dropdown-toggle navbar-btn" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
@@ -61,6 +71,9 @@ Welcome to your Budget
                     href="{{ url_for('set_week', value='next') }}?return={{ request.full_path }}">
                     &gt;&gt;</button>
                 </a>
+                   {% else %}
+                   </div>
+                    {% endif %}
             </div>
         </div>
 </nav>
