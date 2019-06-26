@@ -2,37 +2,19 @@
 
 {% block styles %}
 {{ super() }}
-<style>
-    .bg-danger {
-        background-color: #d9534f;
-    }
+<link href="{{ url_for('static', filename='cssCharts/chart.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/bean-counter.css') }}" rel="stylesheet">
+{% endblock %}
 
-    .bg-success {
-        background-color: #5cb85c;
-    }
-
-    .bg-info {
-        background-color: #5bc0de;
-    }
-
-    .bg-primary {
-        background-color: #428bca;
-    }
-
-    .bg-warning {
-        background-color: #f0ad43;
-    }
-
-    .text-white {
-        color: white;
-    }
-
-    .well.h3 {
-        padding-top: 0px;
-    }
-</style>
-{% endblock%}
-
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='cssCharts/jquery.chart.min.js') }}"></script>
+<script>
+    $('.bar-chart').cssCharts({ type: "bar" });
+    $('.donut-chart').cssCharts({ type: "donut" });
+    $('.line-chart').cssCharts({ type: "line" }); 
+</script>
+{% endblock %}
 
 {% block app_content %}
 <div class="panel panel-default">
@@ -41,31 +23,36 @@
     </div>
     <div class="panel-body">
         <!-- The dashboar for weekly -->
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <div class="col-xs-12 well well-lg
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div
+                class="col-xs-12 well well-lg
                      {{ 'bg-success' if ((categories | sum(attribute='budget_amount')) - ((categories | sum(attribute='weekly_total') or 0) or 0)) >= 0 }}
                      {{ 'bg-danger' if ((categories | sum(attribute='budget_amount')) - ((categories | sum(attribute='weekly_total') or 0) or 0)) < 0 }}">
-                    <h3 class="text-white">Remaining</h3>
-                    <h2 class="text-center text-white">
-                        {{ ((categories | sum(attribute='budget_amount')) - ((categories | sum(attribute='weekly_total') or 0) or 0)) | dollars}}
-                    </h2>
-                </div>
+                <h3>Remaining</h3>
+                <h2>
+                    {{ ((categories | sum(attribute='budget_amount')) - ((categories | sum(attribute='weekly_total') or 0) or 0)) | dollars}}
+                </h2>
             </div>
-            <div class="col-md-4 col-sm-6 hidden-xs">
-                <div class="col-xs-12 well well-lg bg-info">
-                    <h3 class="text-white">Total</h3>
-                    <h2 class="text-center text-white">{{ (categories | sum(attribute='weekly_total')) |dollars }}</h2>
-                </div>
+        </div>
+        <div class="col-md-4 col-sm-6 hidden-xs">
+            <div class="col-xs-12 well well-lg bg-info">
+                <h3>Spent</h3>
+                <h2>{{ (categories | sum(attribute='weekly_total')) |dollars }}</h2>
             </div>
-            <div class="col-md-4 hidden-sm hidden-xs">
-                <div class="col-xs-12 well well-lg bg-primary">
-                    <h3 class="text-white">Budget</h3>
-                    <h2 class="text-center text-white">{{ (categories | sum(attribute='budget_amount')) | dollars }}</h2>
-                </div>
+        </div>
+        <div class="col-md-4 hidden-sm hidden-xs">
+            <div class="col-xs-12 well well-lg bg-primary">
+                <h3>Budget</h3>
+                <h2>{{ (categories | sum(attribute='budget_amount')) | dollars }}</h2>
             </div>
-
+        </div>
+        <!-- Get the percentage for each category.  If it is over 100% set it to 100% because the chart can't handle it -->
         {% if categories %}
         {% for category in categories %}
+        {% set percentage = category.weekly_total/category.budget_amount %}
+        {% if percentage > 1 %}
+        {% set percentage = 1 %}
+        {% endif %}
         <div class="col-md-4 col-sm-6 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -92,6 +79,9 @@
                         {{ category.budget_amount|dollars }}
                         {% endif  %}
                     </p>
+                    <div class="chart">
+                        <div class="donut-chart" data-percent="{{ percentage }}" data-title="% of budget"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -103,58 +93,69 @@
 <!-- Monthly Section-->
 <div class="panel panel-default">
     <div class="panel-heading">
-    <h1>Monthly Stats</h1>
+        <h1>Monthly Stats</h1>
     </div>
     <div class="panel-body">
-    <!-- Monthly Dashboard -->
-    <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="col-xs-12 well well-lg
+        <!-- Monthly Dashboard -->
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div
+                class="col-xs-12 well well-lg
                  {{ 'bg-success' if ((categories | sum(attribute='monthly_budget')) - ((categories | sum(attribute='monthly_total') or 0) or 0)) >= 0 }}
                  {{ 'bg-danger' if ((categories | sum(attribute='monthly_budget')) - ((categories | sum(attribute='monthly_total') or 0) or 0)) < 0 }}">
-                <h3 class="text-white">Remaining</h3>
-                <h2 class="text-center text-white">
+                <h3>Remaining</h3>
+                <h2>
                     {{ ((categories | sum(attribute='monthly_budget')) - ((categories | sum(attribute='monthly_total') or 0) or 0)) | dollars}}
                 </h2>
             </div>
         </div>
         <div class="col-md-4 col-sm-6 hidden-xs">
             <div class="col-xs-12 well well-lg bg-info">
-                <h3 class="text-white">Total</h3>
-                <h2 class="text-center text-white">{{ (categories | sum(attribute='monthly_total')) |dollars }}</h2>
+                <h3>Total</h3>
+                <h2>{{ (categories | sum(attribute='monthly_total')) |dollars }}</h2>
             </div>
         </div>
         <div class="col-md-4 hidden-sm hidden-xs">
             <div class="col-xs-12 well well-lg bg-primary">
-                <h3 class="text-white">Budget</h3>
-                <h2 class="text-center text-white">{{ (categories | sum(attribute='monthly_budget')) | dollars }}</h2>
+                <h3>Budget</h3>
+                <h2>{{ (categories | sum(attribute='monthly_budget')) | dollars }}</h2>
             </div>
         </div>
 
-    <!-- Monthly Categories -->
-    {% if categories %}
-    {% for category in categories %}
-    <div class="col-md-4 col-sm-6 col-xs-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <a href="{{ url_for('category', category_id=category.id) }}">
-                    <strong>{{ category.title }}</strong>
-                </a>
-                <a href="{{ url_for('new_line_item', category_id=category.id) }}">
-                    <span class="glyphicon glyphicon-plus pull-right"></span>
-                </a>
-            </div>
-            <div class="panel-body">
-                <p>Monthly amount: {{ category.monthly_budget|dollars }}</p>
-                {% if category.monthly_total %}
-                <p>Current Month: {{ category.monthly_total|dollars }}</p>
-                {% else %}
-                None so far
-                {% endif %}
+        <!-- Get the percentage for each category.  If it is over 100% set it to 100% because the chart can't handle it -->
+        <!-- Monthly Categories -->
+        {% if categories %}
+        {% for category in categories %}
+        {% set percentage = category.weekly_total/category.monthly_budget %}
+        {% if percentage > 1 %}
+        {% set percentage = 1 %}
+        {% endif %}
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="{{ url_for('category', category_id=category.id) }}">
+                        <strong>{{ category.title }}</strong>
+                    </a>
+                    <a href="{{ url_for('new_line_item', category_id=category.id) }}">
+                        <span class="glyphicon glyphicon-plus pull-right"></span>
+                    </a>
+                </div>
+                <div class="panel-body">
+                    <p>Monthly amount: {{ category.monthly_budget|dollars }}</p>
+                    {% if category.monthly_total %}
+                    <p>Current Month: {{ category.monthly_total|dollars }}</p>
+                    {% else %}
+                    None so far
+                    {% endif %}
+                    <!-- The chart -->
+                    <div class="chart">
+                        <div class="donut-chart" data-percent="{{ percentage }}" data-title="% of budget"></div>
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
-    {% endfor %}
-    {% endif %}
+        {% endfor %}
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -1,0 +1,46 @@
+.bg-danger {
+    background-color: #d9534f;
+}
+
+.bg-success {
+    background-color: #5cb85c;
+}
+
+.bg-info {
+    background-color: #5bc0de;
+}
+
+.bg-primary {
+    background-color: #428bca;
+}
+
+.bg-warning {
+    background-color: #f0ad43;
+}
+
+.text-white {
+    color: white;
+}
+
+.well h3 {
+    padding-top: 0px;
+}
+.well-lg.bg-success{
+    color: white;
+    padding-top: 0px;
+}
+.well-lg.bg-warning {
+    color: white;
+    padding-top: 0px;
+}
+.well-lg.bg-info {
+    color: white;
+    padding-top: 0px;
+}
+.well-lg.bg-primary {
+    color: white;
+    padding-top: 0px;
+}
+.well-lg h2{
+    text-align: center;
+}
