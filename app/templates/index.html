@@ -77,15 +77,15 @@
                     </a>
                 </div>
                 <div class="panel-body">
-                    <p>Budgeted amount: {{ category.budget_amount|dollars }}</p>
-                    <p>Current week total:
+                    <p>Weekly Budgeted: {{ category.budget_amount|dollars }}</p>
+                    <p>Weekly total:
                         {% if category.weekly_total %}
                         {{ category.weekly_total|dollars }}
                         {% else %}
                         None so far
                         {% endif %}
                     </p>
-                    <p>Remaining amount:
+                    <p>Remaining:
                         {% if category.weekly_total %}
                         {{ (category.budget_amount - category.weekly_total)|dollars }}
                         {% else %}

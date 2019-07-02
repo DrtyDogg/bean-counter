@@ -78,7 +78,7 @@ def index():
 
 
 # /category/<ID>
-@app.route(app.config['APPLICATION_ROUTE'] + '/category/<category_id>',
+@app.route(app.config['APPLICATION_ROUTE'] + '/category/<int:category_id>',
            methods=['GET'])
 
 def category(category_id):
@@ -98,7 +98,6 @@ def category(category_id):
     category = Category.query.filter(Category.id == category_id).first()
     days_in_month = monthrange(current_view.year, current_view.month)[1]
     category.monthly_budget = category.budget_amount/7*days_in_month
-
     return render_template('category.html',
                            categories=categories,
                            title='{} budget'.format(category.title),
@@ -165,8 +164,7 @@ def edit_category(category_id):
 @app.route(app.config['APPLICATION_ROUTE'] + '/delete_category/<category_id>',
            methods=['GET'])
 def delete_category(category_id):
-    category = Category.query.filter(
-        Category.id == int(category_id)).first_or_404()
+    category = Category.query.get_or_404(category_id)
     category_title = category.title
     db.session.delete(category)
     db.session.commit()
@@ -174,6 +172,8 @@ def delete_category(category_id):
         category_title), 'warning')
     return redirect(url_for('index'))
 
+
+######## Transactions
 # /New_Transaction/<ID>
 @app.route(app.config['APPLICATION_ROUTE'] + '/new_transaction/<category_id>',
            methods=['GET', 'POST'])
@@ -203,6 +203,7 @@ def new_line_item(category_id):
         return redirect(url_for('category', category_id=category_id))
     else:
         form.category.data = int(category_id)
+        form.date.data = today
     return render_template('new_transaction.html',
                            title='Create a new transaction',
                            form=form,
@@ -217,8 +218,7 @@ def new_line_item(category_id):
 def edit_transaction(transaction_id):
     form = TransactionForm()
     # Get the transaction to edit
-    transaction = LineItem.query.filter(
-        LineItem.id == int(transaction_id)).first_or_404()
+    transaction = LineItem.query.get_or_404(transaction_id)
     # Get the categories
     categories = Category.query.all()
     # Build the category dropdown
