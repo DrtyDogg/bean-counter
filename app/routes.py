@@ -87,7 +87,7 @@ def category(category_id):
     monthly_items = LineItem.query\
         .filter(extract('month', LineItem.date) == current_view.month)\
         .filter(LineItem.category_id == category_id)\
-        .paginate(page=page)
+        .paginate(int(page), 10)
     weekly_items = LineItem.query\
         .filter(LineItem.week == session['current_view'])\
         .filter(LineItem.category_id == category_id)\

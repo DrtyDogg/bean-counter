@@ -9,35 +9,7 @@
 {% endblock %}
 {% block styles %}
 {{ super() }}
-<style>
-    .bg-danger {
-        background-color: #d9534f;
-    }
-
-    .bg-success {
-        background-color: #5cb85c;
-    }
-
-    .bg-info {
-        background-color: #5bc0de;
-    }
-
-    .bg-primary {
-        background-color: #428bca;
-    }
-
-    .bg-warning {
-        background-color: #f0ad43;
-    }
-
-    .text-white {
-        color: white;
-    }
-
-    .well.h3 {
-        padding-top: 0px;
-    }
-</style>
+<link href="{{ url_for('static', filename='css/bean-counter.css') }}" rel="stylesheet">
 {% endblock%}
 {% block app_content %}
 <h1>
@@ -183,7 +155,9 @@
                 </tbody>
             </table>
         </div>
-        {{ render_pagination(monthly_items)}}
+        <div class="col-xs-6 col-xs-offset-3 col-sm-offset-5">
+            {{ render_pagination(monthly_items)}}
+        </div>
         {% else %}
         <strong>None</strong>
         {% endif %}
