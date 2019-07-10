@@ -199,7 +199,7 @@ def new_line_item(category_id):
         db.session.add(lineitem)
         db.session.commit()
         flash('The transaction has been recorded', 'info')
-        return redirect(url_for('category', category_id=category_id))
+        return redirect(url_for('category', category_id=lineitem.category_id))
     else:
         form.category.data = int(category_id)
         form.date.data = today
@@ -259,8 +259,8 @@ def edit_transaction(transaction_id):
     methods=['GET']
 )
 def delete_transaction(transaction_id):
-    transaction = LineItem.get_or_404(transaction_id)
-    cat = transaction.category
+    transaction = LineItem.query.get_or_404(transaction_id)
+    cat = transaction.category_id
     db.session.delete(transaction)
     db.session.commit()
     flash('The transaction has been deleted', 'info')
