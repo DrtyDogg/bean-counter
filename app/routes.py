@@ -123,14 +123,16 @@ def new_category():
                            title='Create a new category',
                            form=form, categories=categories)
 
+
 # /Edit_Category/<ID>
-@app.route(app.config['APPLICATION_ROUTE'] + '/edit_category/<category_id>',
+@app.route(app.config['APPLICATION_ROUTE'] +
+           '/edit_category/<int:category_id>',
            methods=['GET', 'POST'])
 def edit_category(category_id):
     categories = Category.query.all()
     # Make sure the category exists
     for cat in categories:
-        if cat.id is int(category_id):
+        if cat.id is category_id:
             category = cat
             break
     if cat is None:
@@ -158,7 +160,8 @@ def edit_category(category_id):
 
 
 # /Delete_Category/<ID>
-@app.route(app.config['APPLICATION_ROUTE'] + '/delete_category/<category_id>',
+@app.route(app.config['APPLICATION_ROUTE'] +
+           '/delete_category/<int:category_id>',
            methods=['GET'])
 def delete_category(category_id):
     category = Category.query.get_or_404(category_id)
@@ -172,7 +175,8 @@ def delete_category(category_id):
 
 # Transactions
 # /New_Transaction/<ID>
-@app.route(app.config['APPLICATION_ROUTE'] + '/new_transaction/<category_id>',
+@app.route(app.config['APPLICATION_ROUTE'] +
+           '/new_transaction/<int:category_id>',
            methods=['GET', 'POST'])
 def new_line_item(category_id):
     today = datetime.now().date()
@@ -183,9 +187,6 @@ def new_line_item(category_id):
     for cat in categories:
         newCat = (cat.id, cat.title)
         cats.append(newCat)
-        # Get the current category because ??? is this still needed?
-        if cat.id is int(category_id):
-            category = cat
     form.category.choices = cats
     if form.validate_on_submit():
         # Convert the date to an object
@@ -194,7 +195,7 @@ def new_line_item(category_id):
                             week=form.date.data.isocalendar()[1],
                             location=form.location.data,
                             description=form.description.data,
-                            category_id=category_id)
+                            category_id=form.category.data)
         db.session.add(lineitem)
         db.session.commit()
         flash('The transaction has been recorded', 'info')
@@ -211,7 +212,7 @@ def new_line_item(category_id):
 
 # /Edit_Transaction
 @app.route(
-    app.config['APPLICATION_ROUTE'] + '/edit_transaction/<transaction_id>',
+    app.config['APPLICATION_ROUTE'] + '/edit_transaction/<int:transaction_id>',
     methods=['GET', 'POST'])
 def edit_transaction(transaction_id):
     form = TransactionForm()
@@ -234,6 +235,7 @@ def edit_transaction(transaction_id):
         transaction.week = form.date.data.isocalendar()[1]
         transaction.location = form.location.data
         transaction.amount = form.amount.data
+        transaction.category_id = form.category.data
         db.session.commit()
         flash('The transaction has been updated', 'info')
         return redirect(url_for('category',
@@ -249,3 +251,17 @@ def edit_transaction(transaction_id):
                            title='Edit a transaction',
                            form=form,
                            categories=categories)
+
+
+@app.route(
+    app.config['APPLICATION_ROUTE'] +
+    '/delete_transaction/<int:transaction_id>',
+    methods=['GET']
+)
+def delete_transaction(transaction_id):
+    transaction = LineItem.get_or_404(transaction_id)
+    cat = transaction.category
+    db.session.delete(transaction)
+    db.session.commit()
+    flash('The transaction has been deleted', 'info')
+    return redirect(url_for('category', category_id=cat))
