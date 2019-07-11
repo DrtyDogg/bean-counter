@@ -18,7 +18,7 @@ def before_request():
         session['current_view'] = today.isocalendar()[1]
 
 
-@app.route(app.config['APPLICATION_ROUTE'] + '/set_week/<value>',
+@app.route('/set_week/<value>',
            methods=['GET'])
 def set_week(value):
     prev = request.args.get('return')
@@ -36,8 +36,8 @@ def set_week(value):
     return redirect(prev)
 
 
-@app.route(app.config['APPLICATION_ROUTE'] + '/')
-@app.route(app.config['APPLICATION_ROUTE'] + '/index')
+@app.route('/')
+@app.route('/index')
 def index():
     categories = Category.query.all()
     # Get a date object from the currently viewed date
@@ -76,7 +76,7 @@ def index():
 
 
 # /category/<ID>
-@app.route(app.config['APPLICATION_ROUTE'] + '/category/<int:category_id>',
+@app.route('/category/<int:category_id>',
            methods=['GET'])
 
 def category(category_id):
@@ -106,7 +106,7 @@ def category(category_id):
 
 
 # /New_Category
-@app.route(app.config['APPLICATION_ROUTE'] + '/new_category',
+@app.route('/new_category',
            methods=['GET', 'POST'])
 
 def new_category():
@@ -213,9 +213,7 @@ def new_line_item(category_id):
 
 
 # /Edit_Transaction
-@app.route(
-    app.config['APPLICATION_ROUTE'] + '/edit_transaction/<int:transaction_id>',
-    methods=['GET', 'POST'])
+@app.route('/edit_transaction/<int:transaction_id>', methods=['GET', 'POST'])
 def edit_transaction(transaction_id):
     form = TransactionForm()
     # Get the transaction to edit
