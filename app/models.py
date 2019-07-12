@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from app import db
 
@@ -32,10 +32,14 @@ class LineItem(db.Model):
         return '<LineItem: {}, ${}>'.format(self.date, self.amount)
 
     def __init__(self, amount, date, location, description, category_id):
-        objDate = datetime.strptime(date, "%m/%d/%Y")
-        week = objDate.isocalendar()[1]
+        # check if the date is a date object or if it is a string
+        if type(date) is datetime.date:
+            self.date = date
+        else:
+            date = datetime.datetime.strptime(date, "%m/%d/%Y")
+        week = date.isocalendar()[1]
         self.amount = amount
-        self.date = objDate
+        self.date = date
         self.week = week
         self.location = location
         self.description = description

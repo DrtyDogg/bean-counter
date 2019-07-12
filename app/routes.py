@@ -186,12 +186,11 @@ def new_line_item(category_id):
     form.category.choices = cats
     if form.validate_on_submit():
         # Convert the date to an object
-        lineitem = LineItem(amount=form.amount.data,
-                            date=form.date.data,
-                            week=form.date.data.isocalendar()[1],
-                            location=form.location.data,
-                            description=form.description.data,
-                            category_id=form.category.data)
+        lineitem = LineItem(form.amount.data,
+                            form.date.data,
+                            form.location.data,
+                            form.description.data,
+                            form.category.data)
         db.session.add(lineitem)
         db.session.commit()
         flash('The transaction has been recorded', 'info')
