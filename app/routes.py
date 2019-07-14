@@ -113,8 +113,7 @@ def new_category():
     categories = Category.query.all()
     form = CategoryForm()
     if form.validate_on_submit():
-        category = Category(title=form.title.data,
-                            budget_amount=form.budget_amount.data)
+        category = Category(form.title.data, form.budget_amount.data)
         db.session.add(category)
         db.session.commit()
         flash('The {} category has been created'.format(category.title),
@@ -127,8 +126,7 @@ def new_category():
 
 
 # /Edit_Category/<ID>
-@app.route(app.config['APPLICATION_ROUTE'] +
-           '/edit_category/<int:category_id>',
+@app.route('/edit_category/<int:category_id>',
            methods=['GET', 'POST'])
 def edit_category(category_id):
     categories = Category.query.all()
@@ -162,8 +160,7 @@ def edit_category(category_id):
 
 
 # /Delete_Category/<ID>
-@app.route(app.config['APPLICATION_ROUTE'] +
-           '/delete_category/<int:category_id>',
+@app.route('/delete_category/<int:category_id>',
            methods=['GET'])
 def delete_category(category_id):
     category = Category.query.get_or_404(category_id)
@@ -177,8 +174,7 @@ def delete_category(category_id):
 
 # Transactions
 # /New_Transaction/<ID>
-@app.route(app.config['APPLICATION_ROUTE'] +
-           '/new_transaction/<int:category_id>',
+@app.route('/new_transaction/<int:category_id>',
            methods=['GET', 'POST'])
 def new_line_item(category_id):
     today = datetime.now().date()
@@ -192,12 +188,11 @@ def new_line_item(category_id):
     form.category.choices = cats
     if form.validate_on_submit():
         # Convert the date to an object
-        lineitem = LineItem(amount=form.amount.data,
-                            date=form.date.data,
-                            week=form.date.data.isocalendar()[1],
-                            location=form.location.data,
-                            description=form.description.data,
-                            category_id=form.category.data)
+        lineitem = LineItem(form.amount.data,
+                            form.date.data,
+                            form.location.data,
+                            form.description.data,
+                            form.category.data)
         db.session.add(lineitem)
         db.session.commit()
         flash('The transaction has been recorded', 'info')
@@ -253,11 +248,7 @@ def edit_transaction(transaction_id):
                            categories=categories)
 
 
-@app.route(
-    app.config['APPLICATION_ROUTE'] +
-    '/delete_transaction/<int:transaction_id>',
-    methods=['GET']
-)
+@app.route('/delete_transaction/<int:transaction_id>', methods=['GET'])
 def delete_transaction(transaction_id):
     transaction = LineItem.query.get_or_404(transaction_id)
     cat = transaction.category_id
