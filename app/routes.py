@@ -52,7 +52,7 @@ def set_week(value):
         session['current_view'] = session['current_week']
     else:
         flash('Invalid date set', 'warning')
-    return redirect(prev)
+    return redirect(app.config['CONTEXT_ROUTE'] + prev)
 
 
 @app.route('/')
