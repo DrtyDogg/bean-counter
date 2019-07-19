@@ -13,22 +13,41 @@ from app.models import Category, LineItem
 @app.before_request
 def before_request():
     today = datetime.now().date()
-    session['current_week'] = today.isocalendar()[1]
+    session['current_week'] = today.strftime('%U.%Y.SUN')
     if 'current_view' not in session:
-        session['current_view'] = today.isocalendar()[1]
+        session['current_view'] = session['current_week']
 
-
+# /setweek/week_number
 @app.route('/set_week/<value>',
            methods=['GET'])
 def set_week(value):
     prev = request.args.get('return')
+    current = session['current_view'].split('.')
     if prev is None:
         prev = '/index'
-    current = int(session['current_view'])
     if value == 'next':
-        session['current_view'] = current + 1
+        if current[0] == '52':
+            # the year is over
+            current[1] = str(int(current[1]) + 1)
+            current[0] = '0'
+        else:
+            # increment the week
+            current[0] = str(int(current[0]) + 1)
+        session['current_view'] = "{}.{}.{}".format(
+            current[0],
+            current[1],
+            current[2])
     elif value == 'previous':
-        session['current_view'] = current - 1
+        if current[0] == '0':
+            # move to last year
+            current[1] = str(int(current[1]) - 1)
+            current[0] = '52'
+        else:
+            current[0] = str(int(current[0]) - 1)
+        session['current_view'] = "{}.{}.{}".format(
+            current[0],
+            current[1],
+            current[2])
     elif value == 'today':
         session['current_view'] = session['current_week']
     else:
@@ -42,14 +61,15 @@ def index():
     categories = Category.query.all()
     # Get a date object from the currently viewed date
     current_view = datetime.strptime(
-        '2019w{} SUN'.format(session['current_view']), '%YW%U %a')
+        session['current_view'],
+        '%U.%Y.%a')
 
     for category in categories:
 
         # Sum the total of the amount category for the current week
         weekly_total = db.session\
             .query(func.sum(LineItem.amount))\
-            .filter(LineItem.week == session['current_view'])\
+            .filter(LineItem.week == current_view.strftime('%U'))\
             .filter(LineItem.category_id == category.id)\
             .first()[0]
 
