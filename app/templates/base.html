@@ -53,7 +53,7 @@ $(function () {
                     <a type="button" class="btn btn-default navbar-btn disabled" href="">
                         {{ session['current_view'] | week_of }}
                     </a>
-                    {% if not session.current_view >= session.current_week %}
+                    {% if session.current_view != session.current_week %}
                     <a type="button" class="btn btn-default dropdown-toggle navbar-btn" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
@@ -67,7 +67,7 @@ $(function () {
                         </li>
                     </ul>
                 </div>
-                <a type="button" class="btn btn-default navbar-btn {{ 'disabled' if session.current_view >= session.current_week }}"
+                <a type="button" class="btn btn-default navbar-btn {{ 'disabled' if session.current_view == session.current_week }}"
                     href="{{ url_for('set_week', value='next') }}?return={{ request.full_path }}">
                     &gt;&gt;</button>
                 </a>
