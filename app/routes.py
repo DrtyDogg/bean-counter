@@ -103,6 +103,7 @@ def category(category_id):
     current_view = datetime.strptime(
         session['current_view'],
         '%U.%Y.%a')
+    current = session['current_view'].split('.')
     page = request.args.get('page', 1)
     categories = Category.query.all()
     monthly_items = LineItem.query\
@@ -110,7 +111,7 @@ def category(category_id):
         .filter(LineItem.category_id == category_id)\
         .paginate(int(page), 10)
     weekly_items = LineItem.query\
-        .filter(LineItem.week == session['current_view'])\
+        .filter(LineItem.week == current[0])\
         .filter(LineItem.category_id == category_id)\
         .all()
     # Build up the category information
