@@ -37,7 +37,7 @@ class LineItem(db.Model):
             self.date = date
         else:
             date = datetime.datetime.strptime(date, "%m/%d/%Y")
-        week = date.isocalendar()[1]
+        week = date.strftime('%U')
         self.amount = amount
         self.date = date
         self.week = week

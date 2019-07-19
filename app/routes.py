@@ -247,7 +247,7 @@ def edit_transaction(transaction_id):
         # Save the edits
         transaction.description = form.description.data
         transaction.date = form.date.data
-        transaction.week = form.date.data.isocalendar()[1]
+        transaction.week = form.date.data.strftime('%U')
         transaction.location = form.location.data
         transaction.amount = form.amount.data
         transaction.category_id = form.category.data
