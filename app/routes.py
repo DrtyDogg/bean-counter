@@ -52,7 +52,7 @@ def set_week(value):
         session['current_view'] = session['current_week']
     else:
         flash('Invalid date set', 'warning')
-    return redirect(prev)
+    return redirect(app.config['CONTEXT_ROUTE'] + prev)
 
 
 @app.route('/')
@@ -104,6 +104,7 @@ def category(category_id):
     current_view = datetime.strptime(
         session['current_view'],
         '%U.%Y.%a')
+    current = session['current_view'].split('.')
     page = request.args.get('page', 1)
     categories = Category.query.all()
     monthly_items = LineItem.query\
@@ -111,7 +112,7 @@ def category(category_id):
         .filter(LineItem.category_id == category_id)\
         .paginate(int(page), 10)
     weekly_items = LineItem.query\
-        .filter(LineItem.week == session['current_view'])\
+        .filter(LineItem.week == current[0])\
         .filter(LineItem.category_id == category_id)\
         .all()
     # Build up the category information
@@ -248,7 +249,7 @@ def edit_transaction(transaction_id):
         # Save the edits
         transaction.description = form.description.data
         transaction.date = form.date.data
-        transaction.week = form.date.data.isocalendar()[1]
+        transaction.week = form.date.data.strftime('%U')
         transaction.location = form.location.data
         transaction.amount = form.amount.data
         transaction.category_id = form.category.data
