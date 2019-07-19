@@ -102,7 +102,8 @@ def index():
 def category(category_id):
     # Get the currently set week
     current_view = datetime.strptime(
-        '2019w{} SUN'.format(session['current_view']), '%YW%U %a')
+        session['current_view'],
+        '%U.%Y.%a')
     page = request.args.get('page', 1)
     categories = Category.query.all()
     monthly_items = LineItem.query\
