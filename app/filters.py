@@ -16,7 +16,19 @@ def format_dollars(amount):
 
 
 @app.template_filter('week_of')
-def format_week_of(week):
+def format_week_of(date):
     # Get the datetime object from
-    start_day = datetime.strptime('2019w{} SUN'.format(week), '%YW%U %a')
-    return start_day.strftime('Week of %a %B %d %Y')
+    # start_day = datetime.strptime('2019w{} SUN'.format(week), '%YW%U %a')
+    # date = datetime.strptime(session, '%a, %d %b %Y %H:%M:%S  %Z')
+    view = convert_date(date)
+    return view.strftime('Week of %a %B %d %Y')
+
+
+@app.template_filter()
+def format_percentage(pct):
+    return round(pct, 2)
+
+
+def convert_date(date):
+    out = datetime.strptime(date, '%U.%Y.%a')
+    return out
