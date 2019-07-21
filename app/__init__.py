@@ -23,7 +23,9 @@ def create_app(config_class=Config):
 
 # Import the blueprints
     from app.main import bp as main_bp
+    from app.errors import bp as errors_bp
     app.register_blueprint(main_bp)
+    app.register_blueprint(errors_bp)
 
     # Import other files
     with app.app_context():

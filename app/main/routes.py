@@ -115,7 +115,7 @@ def category(category_id):
         .filter(LineItem.category_id == category_id)\
         .all()
     # Build up the category information
-    category = Category.query.filter(Category.id == category_id).first()
+    category = Category.query.get_or_404(category_id)
     days_in_month = monthrange(current_view.year, current_view.month)[1]
     category.monthly_budget = category.budget_amount/7*days_in_month
     return render_template('main/category.html',
