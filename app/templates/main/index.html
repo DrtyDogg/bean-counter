@@ -56,10 +56,10 @@
         <div class="col-md-4 col-sm-6 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="{{ url_for('category', category_id=category.id) }}">
+                    <a href="{{ url_for('main.category', category_id=category.id) }}">
                         <strong>{{ category.title }}</strong>
                     </a>
-                    <a href="{{ url_for('new_line_item', category_id=category.id) }}">
+                    <a href="{{ url_for('main.new_line_item', category_id=category.id) }}">
                         <span class="glyphicon glyphicon-plus pull-right"></span>
                     </a>
                 </div>
@@ -132,10 +132,10 @@
         <div class="col-md-4 col-sm-6 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="{{ url_for('category', category_id=category.id) }}">
+                    <a href="{{ url_for('main.category', category_id=category.id) }}">
                         <strong>{{ category.title }}</strong>
                     </a>
-                    <a href="{{ url_for('new_line_item', category_id=category.id) }}">
+                    <a href="{{ url_for('main.new_line_item', category_id=category.id) }}">
                         <span class="glyphicon glyphicon-plus pull-right"></span>
                     </a>
                 </div>

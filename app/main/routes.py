@@ -1,16 +1,18 @@
 from datetime import datetime
 from decimal import Decimal
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import flash, redirect, render_template, request, session, url_for,\
+                 current_app
 from sqlalchemy import extract, func
 from calendar import monthrange
 
 # Local imports
-from app import app, db
-from app.forms import CategoryForm, TransactionForm
+from app import db
+from app.main.forms import CategoryForm, TransactionForm
 from app.models import Category, LineItem
+from app.main import bp
 
 
-@app.before_request
+@bp.before_request
 def before_request():
     today = datetime.now().date()
     session['current_week'] = today.strftime('%U.%Y.SUN')
@@ -18,8 +20,7 @@ def before_request():
         session['current_view'] = session['current_week']
 
 # /setweek/week_number
-@app.route('/set_week/<value>',
-           methods=['GET'])
+@bp.route('/set_week/<value>', methods=['GET'])
 def set_week(value):
     prev = request.args.get('return')
     current = session['current_view'].split('.')
@@ -52,11 +53,11 @@ def set_week(value):
         session['current_view'] = session['current_week']
     else:
         flash('Invalid date set', 'warning')
-    return redirect(app.config['CONTEXT_ROUTE'] + prev)
+    return redirect(current_app.config['CONTEXT_ROUTE'] + prev)
 
 
-@app.route('/')
-@app.route('/index')
+@bp.route('/')
+@bp.route('/index')
 def index():
     categories = Category.query.all()
     # Get a date object from the currently viewed date
@@ -90,14 +91,13 @@ def index():
         # Get the monthly budget
         days_in_month = monthrange(current_view.year, current_view.month)[1]
         category.monthly_budget = category.budget_amount/7*days_in_month
-    return render_template('index.html',
+    return render_template('main/index.html',
                            title='Home',
                            categories=categories)
 
 
 # /category/<ID>
-@app.route('/category/<int:category_id>',
-           methods=['GET'])
+@bp.route('/category/<int:category_id>', methods=['GET'])
 def category(category_id):
     # Get the currently set week
     current_view = datetime.strptime(
@@ -118,7 +118,7 @@ def category(category_id):
     category = Category.query.filter(Category.id == category_id).first()
     days_in_month = monthrange(current_view.year, current_view.month)[1]
     category.monthly_budget = category.budget_amount/7*days_in_month
-    return render_template('category.html',
+    return render_template('main/category.html',
                            categories=categories,
                            title='{} budget'.format(category.title),
                            category=category,
@@ -127,8 +127,7 @@ def category(category_id):
 
 
 # /New_Category
-@app.route('/new_category',
-           methods=['GET', 'POST'])
+@bp.route('/new_category', methods=['GET', 'POST'])
 def new_category():
     categories = Category.query.all()
     form = CategoryForm()
@@ -139,15 +138,14 @@ def new_category():
         flash('The {} category has been created'.format(category.title),
               'info')
         categories = Category.query.all()
-        return redirect(url_for('index'))
-    return render_template('new_category.html',
+        return redirect(url_for('main.index'))
+    return render_template('main/new_category.html',
                            title='Create a new category',
                            form=form, categories=categories)
 
 
 # /Edit_Category/<ID>
-@app.route('/edit_category/<int:category_id>',
-           methods=['GET', 'POST'])
+@bp.route('/edit_category/<int:category_id>', methods=['GET', 'POST'])
 def edit_category(category_id):
     categories = Category.query.all()
     # Make sure the category exists
@@ -157,7 +155,7 @@ def edit_category(category_id):
             break
     if cat is None:
         flash('That category was not found', 'warning')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     # Load the form
     form = CategoryForm()
 
@@ -168,20 +166,19 @@ def edit_category(category_id):
         db.session.commit()
         flash('The {} category has been updated'.format(category.title),
               'info')
-        return redirect(url_for('category', category_id=category.id))
+        return redirect(url_for('main.category', category_id=category.id))
     else:
         # This isn't a postback so set the form values
         form.title.data = category.title
         form.budget_amount.data = category.budget_amount
-        return render_template('new_category.html',
+        return render_template('main/new_category.html',
                                title='Edit the {} category'.format(
                                    category.title),
                                form=form, categories=categories)
 
 
 # /Delete_Category/<ID>
-@app.route('/delete_category/<int:category_id>',
-           methods=['GET'])
+@bp.route('/delete_category/<int:category_id>', methods=['GET'])
 def delete_category(category_id):
     category = Category.query.get_or_404(category_id)
     category_title = category.title
@@ -189,13 +186,12 @@ def delete_category(category_id):
     db.session.commit()
     flash('The {} category has been deleted'.format(
         category_title), 'warning')
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
 
 # Transactions
 # /New_Transaction/<ID>
-@app.route('/new_transaction/<int:category_id>',
-           methods=['GET', 'POST'])
+@bp.route('/new_transaction/<int:category_id>', methods=['GET', 'POST'])
 def new_line_item(category_id):
     today = datetime.now().date()
     form = TransactionForm()
@@ -216,11 +212,12 @@ def new_line_item(category_id):
         db.session.add(lineitem)
         db.session.commit()
         flash('The transaction has been recorded', 'info')
-        return redirect(url_for('category', category_id=lineitem.category_id))
+        return redirect(url_for('main.category',
+                                category_id=lineitem.category_id))
     else:
         form.category.data = int(category_id)
         form.date.data = today
-    return render_template('new_transaction.html',
+    return render_template('main/new_transaction.html',
                            title='Create a new transaction',
                            form=form,
                            categories=categories,
@@ -228,7 +225,7 @@ def new_line_item(category_id):
 
 
 # /Edit_Transaction
-@app.route('/edit_transaction/<int:transaction_id>', methods=['GET', 'POST'])
+@bp.route('/edit_transaction/<int:transaction_id>', methods=['GET', 'POST'])
 def edit_transaction(transaction_id):
     form = TransactionForm()
     # Get the transaction to edit
@@ -253,7 +250,7 @@ def edit_transaction(transaction_id):
         transaction.category_id = form.category.data
         db.session.commit()
         flash('The transaction has been updated', 'info')
-        return redirect(url_for('category',
+        return redirect(url_for('main.category',
                                 category_id=transaction.category_id))
     else:
         # Not a post so set the default values
@@ -262,17 +259,17 @@ def edit_transaction(transaction_id):
         form.date.data = transaction.date
         form.location.data = transaction.location
         form.amount.data = transaction.amount
-    return render_template('new_transaction.html',
+    return render_template('main/new_transaction.html',
                            title='Edit a transaction',
                            form=form,
                            categories=categories)
 
 
-@app.route('/delete_transaction/<int:transaction_id>', methods=['GET'])
+@bp.route('/delete_transaction/<int:transaction_id>', methods=['GET'])
 def delete_transaction(transaction_id):
     transaction = LineItem.query.get_or_404(transaction_id)
     cat = transaction.category_id
     db.session.delete(transaction)
     db.session.commit()
     flash('The transaction has been deleted', 'info')
-    return redirect(url_for('category', category_id=cat))
+    return redirect(url_for('main.category', category_id=cat))

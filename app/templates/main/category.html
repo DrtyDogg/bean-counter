@@ -17,7 +17,7 @@
     <div class="btn-toolbar">
         <div class="btn-group">
             <a class="btn btn-default" role="group" aria-label="Edit Category"
-                href="{{ url_for('edit_category', category_id=category.id) }}">
+                href="{{ url_for('main.edit_category', category_id=category.id) }}">
                 <span class="glyphicon glyphicon-pencil"></span> Edit category
             </a>
             <button class="btn btn-danger" role="group" aria-label="Delete Category" data-toggle="modal"
@@ -27,7 +27,7 @@
         </div>
         <div class="btn-group" role="group">
             <a class="btn btn-default" role="group" aria-label="New transaction"
-                href="{{ url_for('new_line_item', category_id=category.id) }}">
+                href="{{ url_for('main.new_line_item', category_id=category.id) }}">
                 <span class="glyphicon glyphicon-plus"></span> New transaction
             </a>
         </div>
@@ -86,7 +86,7 @@
                         <td>{{ item.amount|dollars}}</td>
                         <td>{{ item.description }}</td>
                         <td>
-                            <a class="btn btn-default" href="{{ url_for('edit_transaction', transaction_id=item.id) }}">
+                            <a class="btn btn-default" href="{{ url_for('main.edit_transaction', transaction_id=item.id) }}">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
                             <a class="btn btn-danger" href="#DeleteTransaction" data-toggle="modal"
@@ -110,7 +110,7 @@
                                             <button type="button" class="btn btn-default"
                                                 data-dismiss="modal">No</button>
                                             <a type="button" class="btn btn-danger"
-                                                href="{{ url_for('delete_transaction', transaction_id=item.id) }}">
+                                                href="{{ url_for('main.delete_transaction', transaction_id=item.id) }}">
                                                 <span class="glyphicon glyphicon-trash"></span> Delete
                                             </a>
                                         </div>
@@ -209,7 +209,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
                 <a type="button" class="btn btn-danger"
-                    href="{{ url_for('delete_category', category_id=category.id) }}">
+                    href="{{ url_for('main.delete_category', category_id=category.id) }}">
                     <span class="glyphicon glyphicon-trash"></span> Delete
                 </a>
             </div>

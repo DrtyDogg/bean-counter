@@ -27,26 +27,26 @@ $(function () {
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('index') }}">Ellis budget</a>
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">Ellis budget</a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 {% if categories %}
                 {% for category in categories %}
                 <li>
-                    <a href="{{ url_for('category', category_id=category.id) }}">{{ category.title }}</a>
+                    <a href="{{ url_for('main.category', category_id=category.id) }}">{{ category.title }}</a>
                 </li>
                 {% endfor %}
                 {% endif %}
                 <li>
-                    <a href="{{ url_for('new_category') }}">New Category</a>
+                    <a href="{{ url_for('main.new_category') }}">New Category</a>
                 </li>
                 <li>
                 </li>
             </ul>
             <div class="btn-group" role="group">
                 <a type="button" class="btn btn-default navbar-btn"
-                    href="{{ url_for('set_week', value='previous') }}?return={{ request.full_path }}">
+                    href="{{ url_for('main.set_week', value='previous') }}?return={{ request.full_path }}">
                     &lt;&lt;
                 </a>
                 <div class="btn-group" role="group">
@@ -61,14 +61,14 @@ $(function () {
                     </a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="{{ url_for('set_week', value='today') }}?return={{ request.full_path }}">
+                            <a href="{{ url_for('main.set_week', value='today') }}?return={{ request.full_path }}">
                                 Current Week
                             </a>
                         </li>
                     </ul>
                 </div>
                 <a type="button" class="btn btn-default navbar-btn {{ 'disabled' if session.current_view == session.current_week }}"
-                    href="{{ url_for('set_week', value='next') }}?return={{ request.full_path }}">
+                    href="{{ url_for('main.set_week', value='next') }}?return={{ request.full_path }}">
                     &gt;&gt;</button>
                 </a>
                    {% else %}
