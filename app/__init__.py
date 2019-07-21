@@ -2,8 +2,9 @@ import logging
 import os
 from flask import Flask
 from flask_bootstrap import Bootstrap, WebCDN
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
+from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import RotatingFileHandler
 
 # Local imports
@@ -13,14 +14,17 @@ from config import Config
 db = SQLAlchemy()
 migrate = Migrate()
 bootstrap = Bootstrap()
+login = LoginManager()
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     db.init_app(app)
+    login.init_app(app)
     migrate.init_app(app, db)
     bootstrap.init_app(app)
+    login.login_view = 'auth.login'
     app.extensions['bootstrap']['cdns']['jquery'] = WebCDN(
                 '//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/')
 

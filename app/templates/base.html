@@ -74,6 +74,15 @@ $(function () {
                    {% else %}
                    </div>
                     {% endif %}
+                <div class="navbar navbar-right">
+                    {% if current_user.is_anonymous %}
+                    <a href="{{ url_for('auth.login') }}">Log In</a>
+                    {% else %}
+                    <a href="{{ url_for('auth.logout') }}">Log out {{ current_user.username }}</a>
+                    {% endif %}
+
+                </div>
+
             </div>
         </div>
 </nav>
