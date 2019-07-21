@@ -9,3 +9,4 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CONTEXT_ROUTE = os.environ.get('CONTEXT_ROUTE') or ''
+    LOG_DIR = os.environ.get('LOG_DIR') or 'logs'

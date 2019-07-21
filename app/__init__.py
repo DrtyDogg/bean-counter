@@ -1,7 +1,10 @@
+import logging
+import os
 from flask import Flask
 from flask_bootstrap import Bootstrap, WebCDN
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from logging.handlers import RotatingFileHandler
 
 # Local imports
 from config import Config
@@ -21,7 +24,21 @@ def create_app(config_class=Config):
     app.extensions['bootstrap']['cdns']['jquery'] = WebCDN(
                 '//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/')
 
-# Import the blueprints
+    if not app.debug and not app.testing:
+        if not os.path.exists(app.config['LOG_DIR']):
+            os.mkdir(app.config['LOG_DIR'])
+        file_handler = RotatingFileHandler(
+            app.config['LOG_DIR'] + '/bean-counter.log',
+            maxBytes=10240, backupCount=10)
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+
+        app.logger.setLevel(logging.INFO)
+        app.logger.info('** Bean Counter Startup **')
+
+    # Import the blueprints
     from app.main import bp as main_bp
     from app.errors import bp as errors_bp
     app.register_blueprint(main_bp)
