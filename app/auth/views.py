@@ -17,10 +17,10 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
+        if user is None or not user.check_password(password=form.password.data):
             flash('Username or password is invalid', 'warning')
             return redirect(url_for('auth.login'))
-        login_user(form.username.data, remember=form.remember_me.data)
+        login_user(user, remember=form.remember_me.data)
         #  Get the next_page arg, if none return to index
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -44,7 +44,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
+        user.set_password(password=form.password.data)
         db.session.add(user)
         db.session.commit()
         flash('You have been registered!', 'success')

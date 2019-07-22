@@ -10,9 +10,9 @@ Welcome to your Budget
 {% block scripts %}
 {{ super() }}
 <script>
-$(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 </script>
 {% endblock %}
 
@@ -67,24 +67,24 @@ $(function () {
                         </li>
                     </ul>
                 </div>
-                <a type="button" class="btn btn-default navbar-btn {{ 'disabled' if session.current_view == session.current_week }}"
+                <a type="button"
+                    class="btn btn-default navbar-btn {{ 'disabled' if session.current_view == session.current_week }}"
                     href="{{ url_for('main.set_week', value='next') }}?return={{ request.full_path }}">
                     &gt;&gt;</button>
                 </a>
-                   {% else %}
-                   </div>
-                    {% endif %}
-                <div class="navbar navbar-right">
-                    {% if current_user.is_anonymous %}
-                    <a href="{{ url_for('auth.login') }}">Log In</a>
-                    {% else %}
-                    <a href="{{ url_for('auth.logout') }}">Log out {{ current_user.username }}</a>
-                    {% endif %}
-
-                </div>
-
+                {% else %}
             </div>
+            {% endif %}
         </div>
+        <div class="navbar navbar-right">
+            {% if current_user.is_anonymous %}
+            <a href="{{ url_for('auth.login') }}">Log In</a>
+            {% else %}
+            <a href="{{ url_for('auth.logout') }}">Log out {{ current_user.username }}</a>
+            {% endif %}
+        </div>
+
+    </div>
 </nav>
 {% endblock %}
 
