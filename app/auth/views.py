@@ -36,7 +36,7 @@ def logout():
     return redirect(url_for('main.index'))
 
 
-@bp.route('/register')
+@bp.route('/register', methods=['GET', 'POST'])
 def register():
     categories = Category.query.all()
     if current_user.is_authenticated:
