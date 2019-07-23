@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from flask import flash, redirect, render_template, request, session, url_for,\
                  current_app
+from flask_login import login_required
 from sqlalchemy import extract, func
 from calendar import monthrange
 
@@ -21,6 +22,7 @@ def before_request():
 
 # /setweek/week_number
 @bp.route('/set_week/<value>', methods=['GET'])
+@login_required
 def set_week(value):
     prev = request.args.get('return')
     current = session['current_view'].split('.')
@@ -58,6 +60,7 @@ def set_week(value):
 
 @bp.route('/')
 @bp.route('/index')
+@login_required
 def index():
     categories = Category.query.all()
     # Get a date object from the currently viewed date
@@ -98,6 +101,7 @@ def index():
 
 # /category/<ID>
 @bp.route('/category/<int:category_id>', methods=['GET'])
+@login_required
 def category(category_id):
     # Get the currently set week
     current_view = datetime.strptime(
@@ -128,6 +132,7 @@ def category(category_id):
 
 # /New_Category
 @bp.route('/new_category', methods=['GET', 'POST'])
+@login_required
 def new_category():
     categories = Category.query.all()
     form = CategoryForm()
@@ -146,6 +151,7 @@ def new_category():
 
 # /Edit_Category/<ID>
 @bp.route('/edit_category/<int:category_id>', methods=['GET', 'POST'])
+@login_required
 def edit_category(category_id):
     categories = Category.query.all()
     # Make sure the category exists
@@ -179,6 +185,7 @@ def edit_category(category_id):
 
 # /Delete_Category/<ID>
 @bp.route('/delete_category/<int:category_id>', methods=['GET'])
+@login_required
 def delete_category(category_id):
     category = Category.query.get_or_404(category_id)
     category_title = category.title
@@ -192,6 +199,7 @@ def delete_category(category_id):
 # Transactions
 # /New_Transaction/<ID>
 @bp.route('/new_transaction/<int:category_id>', methods=['GET', 'POST'])
+@login_required
 def new_line_item(category_id):
     today = datetime.now().date()
     form = TransactionForm()
@@ -226,6 +234,7 @@ def new_line_item(category_id):
 
 # /Edit_Transaction
 @bp.route('/edit_transaction/<int:transaction_id>', methods=['GET', 'POST'])
+@login_required
 def edit_transaction(transaction_id):
     form = TransactionForm()
     # Get the transaction to edit
@@ -266,6 +275,7 @@ def edit_transaction(transaction_id):
 
 
 @bp.route('/delete_transaction/<int:transaction_id>', methods=['GET'])
+@login_required
 def delete_transaction(transaction_id):
     transaction = LineItem.query.get_or_404(transaction_id)
     cat = transaction.category_id

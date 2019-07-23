@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block app_content %}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">User name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Enabled</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td><input type="checkbox" {{ 'checked' if user.active }} value="{{ user.id }}"></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

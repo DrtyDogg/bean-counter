@@ -1,5 +1,5 @@
 from flask import flash, redirect, render_template, request, url_for
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 # Local imports
@@ -17,7 +17,8 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(password=form.password.data):
+        if user is None or\
+                not user.check_password(password=form.password.data):
             flash('Username or password is invalid', 'warning')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
@@ -45,6 +46,7 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(password=form.password.data)
+        user.is_active = False
         db.session.add(user)
         db.session.commit()
         flash('You have been registered!', 'success')
@@ -53,3 +55,14 @@ def register():
                            title='Register a user',
                            categories=categories,
                            form=form)
+
+
+@bp.route('/users')
+@login_required
+def users():
+    users = User.query.all()
+    categories = Category.query.all()
+    return render_template('auth/users.html',
+                           title='Manage users',
+                           users=users,
+                           categories=categories)
