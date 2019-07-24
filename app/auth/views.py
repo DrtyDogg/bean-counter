@@ -17,9 +17,15 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        # Verify the user is found and their password
         if user is None or\
                 not user.check_password(password=form.password.data):
             flash('Username or password is invalid', 'warning')
+            return redirect(url_for('auth.login'))
+        # Check if the user is active
+        if not user.is_active():
+            flash('Your account is not active, please contact the\
+                 administrator', 'warning')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         #  Get the next_page arg, if none return to index
