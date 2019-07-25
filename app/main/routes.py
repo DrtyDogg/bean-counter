@@ -96,6 +96,7 @@ def index():
         category.monthly_budget = category.budget_amount/7*days_in_month
     return render_template('main/index.html',
                            title='Home',
+                           route='index',
                            categories=categories)
 
 
@@ -126,6 +127,7 @@ def category(category_id):
                            categories=categories,
                            title='{} budget'.format(category.title),
                            category=category,
+                           route=category.title,
                            monthly_items=monthly_items,
                            weekly_items=weekly_items)
 
@@ -146,6 +148,7 @@ def new_category():
         return redirect(url_for('main.index'))
     return render_template('main/new_category.html',
                            title='Create a new category',
+                           route='new_category',
                            form=form, categories=categories)
 
 
@@ -180,6 +183,7 @@ def edit_category(category_id):
         return render_template('main/new_category.html',
                                title='Edit the {} category'.format(
                                    category.title),
+                               route='edit_category',
                                form=form, categories=categories)
 
 

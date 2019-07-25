@@ -71,6 +71,7 @@ def users():
     return render_template('auth/users.html',
                            title='Manage users',
                            users=users,
+                           route='users',
                            categories=categories)
 
 

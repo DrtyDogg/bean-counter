@@ -33,15 +33,15 @@ Welcome to your Budget
             <ul class="nav navbar-nav">
                 {% if categories %}
                 {% for category in categories %}
-                <li>
+                <li class="{{ 'active' if route == category.title }}">
                     <a href="{{ url_for('main.category', category_id=category.id) }}">{{ category.title }}</a>
                 </li>
                 {% endfor %}
                 {% endif %}
-                <li>
+                <li class="{{ 'active' if route == 'new_category' }}">
                     <a href="{{ url_for('main.new_category') }}">New Category</a>
                 </li>
-                <li>
+                <li class="{{ 'active' if route == 'users' }}">
                     <a href="{{ url_for('auth.users') }}">Users</a>
                 </li>
             </ul>
