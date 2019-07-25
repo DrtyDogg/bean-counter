@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
@@ -72,3 +72,16 @@ def users():
                            title='Manage users',
                            users=users,
                            categories=categories)
+
+
+@bp.route('/activate', methods=['POST'])
+@login_required
+def activateUser():
+    user = User.query.get(int(request.form['id']))
+    if user != current_user:
+        active = request.form['active'] == 'true'
+        user.active = active
+        db.session.commit()
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False)

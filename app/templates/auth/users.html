@@ -1,4 +1,38 @@
 {% extends "base.html" %}
+{% block scripts %}
+{{ super() }}
+<script>
+$(".isActive").change(function() {
+    // Just make sure that the user isn't disabling theirselves
+    id = this.value
+    if (id == "{{ current_user.id }}"){
+        alert('You cannot do that');
+        this.checked == true;
+    }else{
+        $.ajax({
+            method: "POST",
+            url: "{{ url_for('auth.activateUser') }}",
+            data: {id : id, active: this.checked}
+        }).done(function(data) {
+            row = "#trUser_" + id;
+            if (data.success) {
+
+                $(row).addClass("success");
+                setTimeout(function(){
+                    $(row).removeClass("success")}, 5000);
+            }else {
+                $(row).addClass("warning");
+                setTimeout(function(){
+                    $(row).removeClass("warning")
+                }, 5000)
+            }
+        });
+    }
+
+
+})
+</script>
+{%  endblock %}
 {% block app_content %}
 <table class="table">
     <thead>
@@ -10,10 +44,10 @@
     </thead>
     <tbody>
         {% for user in users %}
-        <tr>
+        <tr id="trUser_{{ user.id }}">
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
-            <td><input type="checkbox" {{ 'checked' if user.active }} value="{{ user.id }}"></td>
+            <td><input class="isActive" {{ 'disabled' if user.id == current_user.id }} type="checkbox" {{ 'checked' if user.is_active() }} value="{{ user.id }}"></td>
         </tr>
         {% endfor %}
     </tbody>
