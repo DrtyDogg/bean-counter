@@ -1,4 +1,6 @@
-import datetime
+import base64
+import os
+from datetime import datetime, timedelta
 from flask_login import UserMixin
 from werkzeug import generate_password_hash, check_password_hash
 
@@ -40,7 +42,7 @@ class LineItem(db.Model):
 
     def __init__(self, amount, date, location, description, category_id):
         # check if the date is a date object or if it is a string
-        if type(date) is datetime.date:
+        if type(date) is datetime.date or datetime.datetime:
             self.date = date
         else:
             date = datetime.datetime.strptime(date, "%m/%d/%Y")
@@ -52,6 +54,39 @@ class LineItem(db.Model):
         self.description = description
         self.category_id = category_id
 
+    def to_dict(self):
+        cat = Category.query.get(self.category_id)
+        data = {
+            'id': self.id,
+            'amount': format(self.amount, '.2f'),
+            'date': self.date.strftime("%m/%d/%Y"),
+            'week': self.week,
+            'location': self.location,
+            'description': self.description,
+            'category': {
+                'id': cat.id,
+                'title': cat.title,
+                'budget': format(cat.budget_amount, '.2f')
+            }
+        }
+        return data
+
+    def from_dict(self, data):
+        for field in ['amount', 'date', 'location',
+                      'description', 'category_id']:
+            if field in data:
+                if field == 'date':
+                    date = datetime.strptime(data[field], "$m/%d/%Y")
+                    week = date.strftime("%U")
+                    self.week = week
+                    self.date = date
+                elif field == 'category_id':
+                    self.category_id = data.category.category_id
+                elif field == 'amount':
+                    self.amount = float(data[field])
+                else:
+                    setattr(self, field, data[field])
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -59,6 +94,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     active = db.Column(db.Boolean, default=False)
+    token = db.Column(db.String(32), index=True, unique=True)
+    token_expiration = db.Column(db.DateTime)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -71,3 +108,22 @@ class User(UserMixin, db.Model):
 
     def is_active(self):
         return self.active
+
+    def get_token(self, expires_in=3600):
+        now = datetime.utcnow()
+        if self.token and self.token_expiration > now + timedelta(seconds=60):
+            return self.token
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.token_expiration = now + timedelta(seconds=expires_in)
+        db.session.add(self)
+        return self.token
+
+    def revoke_token(self):
+        self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+
+    @staticmethod
+    def check_token(token):
+        user = User.query.filter_by(token=token).first()
+        if user is None or user.token_expiration < datetime.utcnow():
+            return None
+        return user
