@@ -5,12 +5,14 @@ from sqlalchemy import extract
 # local imports
 from app.api import bp
 from app.api.errors import bad_request
+from app.api.auth import token_auth
 from app import db
 from app.models import LineItem
 
 
 @bp.route('/transaction/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 @bp.route('/transaction', methods=['POST'])
+@token_auth.login_required
 def transaction(id=None):
     """ This handles all mehods for single transactions """
 
@@ -67,6 +69,7 @@ def transaction(id=None):
 
 
 @bp.route('/transactions/<int:category_id>', methods=['GET'])
+@token_auth.login_required
 def transactions(category_id):
     view = request.args.get('view', 'all', type=str)
     if view == 'all':
