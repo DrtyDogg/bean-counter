@@ -48,11 +48,11 @@ def transaction(id=None):
         data = request.get_json() or {}
         # is an id specified in either way?
         if 'id' in data:
-            if id:
+            if id is None:
                 if data['id'] != id:
                     return bad_request('two different ids specified')
             else:
-                id = data['id']
+                id = int(data['id'])
         elif id is None:
             return bad_request('no id specified')
 
@@ -66,6 +66,9 @@ def transaction(id=None):
         db.session.delete(lineitem)
         db.session.commit()
         return '', 204
+    else:
+        return bad_request('Operation not supported')
+
 
 
 @bp.route('/transactions/<int:category_id>', methods=['GET'])

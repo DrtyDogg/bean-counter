@@ -27,6 +27,18 @@ class Category(db.Model):
         self.title = title
         self.budget_amount = budget_amount
 
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'title': self.title,
+            'budget_amount': format(self.budget_amount, '.2f')
+        }
+        return data
+
+    def from_dict(self, data):
+        for field in ['title', 'budget_amount']:
+            setattr(self, field, data[field])
+
 
 class LineItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
