@@ -70,7 +70,6 @@ def transaction(id=None):
         return bad_request('Operation not supported')
 
 
-
 @bp.route('/transactions/<int:category_id>', methods=['GET'])
 @token_auth.login_required
 def transactions(category_id):

@@ -16,7 +16,7 @@ def categories():
 
 
 @bp.route('/category/<int:id>', methods=['GET', 'PUT', 'DELETE'])
-@bp.route('/category', methods=['GET','POST', 'PUT'])
+@bp.route('/category', methods=['GET', 'POST', 'PUT'])
 @token_auth.login_required
 def category(id='None'):
     if request.method == 'GET':

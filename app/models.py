@@ -139,3 +139,20 @@ class User(UserMixin, db.Model):
         if user is None or user.token_expiration < datetime.utcnow():
             return None
         return user
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'active': self.active
+        }
+        return data
+
+    def from_dict(self, data):
+        for field in ['username', 'email', 'active']:
+            if field in data:
+                if field == 'active':
+                    self.active = data['active'] == 'true'
+                else:
+                    setattr(self, field, data[field])
