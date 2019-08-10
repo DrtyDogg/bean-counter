@@ -5,7 +5,7 @@ from werkzeug.urls import url_parse
 # Local imports
 from app import db
 from app.auth import bp
-from app.auth.forms import LoginForm, RegistrationForm
+from app.auth.forms import LoginForm, ProfileForm, RegistrationForm
 from app.models import Category, User
 
 
@@ -66,7 +66,37 @@ def register():
 @bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    pass
+    categories = Category.query.all()
+    form = ProfileForm()
+    # You can't change the admin username
+    if current_user.username == 'admin':
+        form.username.render_kw = {'readonly': True}
+    me = User.query.get(current_user.id)
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if not user:
+            me.username = form.username.data
+        elif user and user.id != current_user.id:
+            flash('That username is already taken', 'warning')
+            return redirect(url_for('auth.profile'))
+        email_check = User.query.filter_by(email=form.email.data).scalar()
+        if not email_check:
+            me.email = form.email.data
+        elif email_check and email_check.id != current_user.id:
+            flash('That email is in use', 'warning')
+            return redirect(url_for('auth.profile'))
+
+        if form.password.data != '':
+            me.set_password(form.password.data)
+        db.session.commit()
+        flash('Your profile has been updated', 'info')
+    else:
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    return render_template('auth/profile.html',
+                           title='Edit your profile',
+                           categories=categories,
+                           form=form)
 
 
 @bp.route('/users')
