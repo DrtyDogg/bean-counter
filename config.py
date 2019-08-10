@@ -10,3 +10,5 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CONTEXT_ROUTE = os.environ.get('CONTEXT_ROUTE') or ''
     LOG_DIR = os.environ.get('LOG_DIR') or 'logs'
+    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD') or None
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or None

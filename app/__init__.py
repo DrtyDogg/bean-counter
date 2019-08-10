@@ -55,4 +55,5 @@ def create_app(config_class=Config):
     # Import other files
     with app.app_context():
         from . import filters, models
-    return app
+
+        return app
