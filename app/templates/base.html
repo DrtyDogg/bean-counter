@@ -42,9 +42,6 @@ Welcome to your Budget
                 <li class="{{ 'active' if route == 'new_category' }}">
                     <a href="{{ url_for('main.new_category') }}">New Category</a>
                 </li>
-                <li class="{{ 'active' if route == 'users' }}">
-                    <a href="{{ url_for('auth.users') }}">Users</a>
-                </li>
             </ul>
             <div class="btn-group" role="group">
                 <a type="button" class="btn btn-default navbar-btn"
@@ -79,13 +76,32 @@ Welcome to your Budget
             {% endif %}
         </div>
         {% endif %}
-            {% if current_user.is_anonymous %}
-            <a class="{{ 'active' if route == 'login' }} nav navbar-text navbar-right" href="{{ url_for('auth.login') }}">
-                <span class="glyphicon glyphicon-log-in"></span> Log In</a>
-            {% else %}
-            <a class="nav navbar-text navbar-right" href="{{ url_for('auth.logout') }}">
-                <span class="glyphicon glyphicon-log-out"></span> Log out {{ current_user.username }}</a>
-            {% endif %}
+        {% if current_user.is_anonymous %}
+        <a class="{{ 'active' if route == 'login' }} nav navbar-text navbar-right" href="{{ url_for('auth.login') }}">
+            <span class="glyphicon glyphicon-log-in"></span> Log In</a>
+        {% else %}
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    {{ current_user.username }} <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="{{ 'active' if route == 'profile' }}" href="{{ url_for('auth.profile') }}">
+                            <span class="glyphicon glyphicon-user"></span> Profile
+                        </a>
+                    </li>
+                    <li class="{{ 'active' if route == 'users' }}"><a href="{{ url_for('auth.users') }}"><span
+                                class="glyphicon glyphicon-list-alt"></span> All Users</a></li>
+                    <li>
+                        <a href="{{ url_for('auth.logout') }}">
+                            <span class="glyphicon glyphicon-log-out"></span> Log out
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        {% endif %}
 
     </div>
 </nav>

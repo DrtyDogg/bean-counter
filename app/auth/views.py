@@ -63,6 +63,12 @@ def register():
                            form=form)
 
 
+@bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    pass
+
+
 @bp.route('/users')
 @login_required
 def users():
