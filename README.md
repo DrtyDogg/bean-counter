@@ -34,6 +34,16 @@ flask run
 ````
 The virtual environment isn't required but strongly suggested
 
+Environment Variables
+------------
+- ADMIN_USERNAME *optional* The username for the administrator account.  Default: **admin**
+- ADMIN_PASSWORD *optional*The password for the administrator account. Default: **admin1234**
+- ADMIN_EMAIL *optional* The email address for the administrator account. Default: **admin@admin.adm**
+- LOG_DIR *optional* The log directory Default: **logs**
+- CONTEXT_ROUTE *optional* If you host proxy the site behind a context route specify that route here.
+- DATABASE_URL *optional* Where the database is located.  Default: **app.db**
+- SECRET_KEY *change this* The key used for password hashing. Default: **My-default-key**
+
 Releases
 ------------
 v1.0 7/19/2019
