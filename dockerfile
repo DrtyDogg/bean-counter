@@ -4,7 +4,7 @@ RUN adduser -D budget
 
 WORKDIR /home/budget
 
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-devel
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
 RUN venv/bin/pip install -r requirements.txt
