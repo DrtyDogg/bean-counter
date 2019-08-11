@@ -48,13 +48,14 @@ class LineItem(db.Model):
     location = db.Column(db.String(128))
     description = db.Column(db.String(255))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return '<LineItem: {}, ${}>'.format(self.date, self.amount)
 
-    def __init__(self, amount, date, location, description, category_id):
+    def __init__(self, amount, date, location, description, category_id, user_id):
         # check if the date is a date object or if it is a string
-        if type(date) is datetime.date or datetime.datetime:
+        if type(date) is datetime.date or datetime:
             self.date = date
         else:
             date = datetime.datetime.strptime(date, "%m/%d/%Y")
@@ -65,6 +66,7 @@ class LineItem(db.Model):
         self.location = location
         self.description = description
         self.category_id = category_id
+        self.user_id = user_id
 
     def to_dict(self):
         cat = Category.query.get(self.category_id)
@@ -108,6 +110,9 @@ class User(UserMixin, db.Model):
     active = db.Column(db.Boolean, default=False)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    line_items = db.relationship('LineItem',
+                                 backref='line_items',
+                                 lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)

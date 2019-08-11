@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from flask import flash, redirect, render_template, request, session, url_for,\
                  current_app
-from flask_login import login_required
+from flask_login import current_user, login_required
 from sqlalchemy import extract, func
 from calendar import monthrange
 
@@ -220,7 +220,8 @@ def new_line_item(category_id):
                             form.date.data,
                             form.location.data,
                             form.description.data,
-                            form.category.data)
+                            form.category.data,
+                            current_user.id)
         db.session.add(lineitem)
         db.session.commit()
         flash('The transaction has been recorded', 'info')
