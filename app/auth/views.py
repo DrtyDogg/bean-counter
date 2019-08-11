@@ -95,6 +95,7 @@ def profile():
         form.email.data = current_user.email
     return render_template('auth/profile.html',
                            title='Edit your profile',
+                           route='profile',
                            categories=categories,
                            form=form)
 
