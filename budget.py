@@ -5,7 +5,8 @@ from app.models import Category, LineItem, User
 app = create_app()
 with app.app_context():
 
-    admin = User.query.filter_by(username='admin').first()
+    username = app.config['ADMIN_USERNAME']
+    admin = User.query.filter_by(username=username).first()
     email = app.config['ADMIN_EMAIL']
     password = app.config['ADMIN_PASSWORD']
     if admin is None:

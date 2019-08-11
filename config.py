@@ -12,3 +12,4 @@ class Config(object):
     LOG_DIR = os.environ.get('LOG_DIR') or 'logs'
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD') or None
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or None
+    ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME') or 'admin'
