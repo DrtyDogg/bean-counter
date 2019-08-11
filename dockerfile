@@ -4,10 +4,12 @@ RUN adduser -D budget
 
 WORKDIR /home/budget
 
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
 RUN venv/bin/pip install -r requirements.txt
 RUN venv/bin/pip install gunicorn
+RUN apk del .build-deps gcc musl-dev
 RUN mkdir db
 
 COPY app app
