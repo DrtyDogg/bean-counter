@@ -1,18 +1,13 @@
 #!/bin/sh
 
 #set the pythone envirounment
+echo entering the venv
 source venv/bin/activate
 
-#update the DB and compile the application
-while true; do
-    flask db upgrade
-    if [[ "$?" == 0]]; then
-       break
-    fi
-    echo Upgrade command failed, retrying in 5 secs...
-    sleep 5
-done
+#update the DB
+echo Upgrading the database
+flask db upgrade
 
-# Run the app without a context route
-
+# Run the app
+echo running the application
 exec gunicorn -e SCRIPT_NAME=$CONTEXT_ROUTE -b :5000 --access-logfile - --error-logfile - budget:app
